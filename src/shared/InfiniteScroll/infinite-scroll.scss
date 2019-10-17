@@ -1,0 +1,19 @@
+body {
+  margin: 0;
+}
+
+.infinite-scroll {
+  .block-ui-container {
+    min-height: 17em;
+  }
+  .full-min-height {
+    min-height: 100%;
+  }
+  .no-data {
+    width: 100%;
+    text-align: center;
+    padding: 64px;
+  }
+  @import 'components/items.scss';
+  @import 'components/load-more-items.scss';
+}
