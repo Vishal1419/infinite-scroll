@@ -3,8 +3,18 @@ body {
 }
 
 .infinite-scroll {
+  .header, .footer {
+    margin: 10px 0;
+    display: flex;
+    justify-content: center;
+  }
   .block-ui-container {
     min-height: 17em;
+  }
+  .loader-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   .full-min-height {
     min-height: 100%;
@@ -14,6 +24,4 @@ body {
     text-align: center;
     padding: 64px;
   }
-  @import 'components/items.scss';
-  @import 'components/load-more-items.scss';
 }

@@ -15,6 +15,7 @@ const InfiniteScrollContainer = ({
   loading, hasError,
   didMount, blockInitialCall,
   blocker, loader, showBlocker, loadMoreContent,
+  isVirtualized, header, footer, disableSensor,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
 
@@ -62,6 +63,10 @@ const InfiniteScrollContainer = ({
       loader={loader}
       showBlocker={showBlocker}
       loadMoreContent={loadMoreContent}
+      isVirtualized={isVirtualized}
+      header={header}
+      footer={footer}
+      disableSensor={disableSensor}
     >
       {children}
     </InfiniteScroll>
@@ -82,10 +87,14 @@ InfiniteScrollContainer.propTypes = {
   noData: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   didMount: PropTypes.func,
   blockInitialCall: PropTypes.bool,
-  blocker: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
-  loader: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  blocker: PropTypes.node,
+  loader: PropTypes.node,
   showBlocker: PropTypes.bool,
   loadMoreContent: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  isVirtualized: PropTypes.bool,
+  header: PropTypes.node,
+  footer: PropTypes.node,
+  disableSensor: PropTypes.bool,
 };
 
 InfiniteScrollContainer.defaultProps = {
@@ -101,10 +110,14 @@ InfiniteScrollContainer.defaultProps = {
   noData: 'No Data',
   didMount: noop,
   blockInitialCall: false,
-  blocker: 'ball-clip-rotate',
-  loader: 'ball-clip-rotate',
+  blocker: null,
+  loader: null,
   showBlocker: true,
   loadMoreContent: 'Load More',
+  isVirtualized: true,
+  header: null,
+  footer: null,
+  disableSensor: false,
 };
 
 export default InfiniteScrollContainer;

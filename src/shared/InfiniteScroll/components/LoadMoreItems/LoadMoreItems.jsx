@@ -1,13 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Loader } from 'react-loaders';
 
+import './load-more-items.scss';
 import InfiniteSensor from './InfiniteSensor';
-import { noop } from '../../../utils';
+import Loader from '../Loader/Loader';
+import { noop } from '../../../../utils';
 
 const LoadMoreItems = ({
   onPageNoChange, pageNo, pageSize, total,
   noOfItems, loading, hasError, loader, loadMoreContent,
+  disableSensor,
 }) => {
   const checkLoaderVisibility = () => pageNo === 0 // eslint-disable-line
     ? true
@@ -19,11 +21,7 @@ const LoadMoreItems = ({
         noOfItems > 0 && checkLoaderVisibility() && loading
         && (
           <div className="infinite-loader">
-            {
-              !loader || typeof loader === 'string'
-                ? <Loader type={loader || 'ball-clip-rotate'} active />
-                : loader
-            }
+            { loader || <Loader size={20} /> }
           </div>
         )
       }
@@ -31,7 +29,7 @@ const LoadMoreItems = ({
         !hasError && checkLoaderVisibility() && !loading
         && (
           <InfiniteSensor
-            active
+            active={!disableSensor}
             className="infinite-sensor"
             onReachedBottom={() => onPageNoChange(pageNo + 1)}
           />
@@ -63,8 +61,9 @@ LoadMoreItems.propTypes = {
   noOfItems: PropTypes.number,
   loading: PropTypes.bool,
   hasError: PropTypes.bool,
-  loader: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  loader: PropTypes.node,
   loadMoreContent: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  disableSensor: PropTypes.bool,
 };
 
 LoadMoreItems.defaultProps = {
@@ -75,8 +74,9 @@ LoadMoreItems.defaultProps = {
   noOfItems: 0,
   loading: false,
   hasError: false,
-  loader: 'ball-clip-rotate',
+  loader: null,
   loadMoreContent: 'Load More',
+  disableSensor: false,
 };
 
 export default LoadMoreItems;

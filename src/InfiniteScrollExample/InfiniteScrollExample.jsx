@@ -22,10 +22,18 @@ const InfiniteScrollExample = ({
       didMount={() => {
         console.log('inside settimeout');
       }}
-      blocker="ball-clip-rotate"
-      loader="ball-clip-rotate"
       showBlocker
       loadMoreContent="Load More Data"
+      isVirtualized={false}
+      header={(
+        <div>
+          <button type="button" onClick={() => setPageSize(2)}>2</button>
+          <button type="button" onClick={() => setPageSize(5)}>5</button>
+          <button type="button" onClick={() => setPageSize(10)}>10</button>
+        </div>
+      )}
+      footer={`total ${total}`}
+      disableSensor
     >
       {
         (item) => (
@@ -33,17 +41,6 @@ const InfiniteScrollExample = ({
         )
       }
     </InfiniteScroll>
-    <div
-      style={{
-        position: 'absolute',
-        top: 20,
-        right: 20,
-      }}
-    >
-      <button type="button" onClick={() => setPageSize(2)}>2</button>
-      <button type="button" onClick={() => setPageSize(5)}>5</button>
-      <button type="button" onClick={() => setPageSize(10)}>10</button>
-    </div>
   </>
 );
 
