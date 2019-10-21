@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 
 import InfiniteScrollExample from './InfiniteScrollExample';
 
+const isPaginated = true;
+
 class InfiniteScrollExampleContainer extends Component {
   constructor(props) {
     super(props);
@@ -24,13 +26,20 @@ class InfiniteScrollExampleContainer extends Component {
     });
     setTimeout(() => {
       this.setState(({ items }) => ({
-        items: [
-          ...items,
-          ...this.items.slice(
-            (nextPageNo - 1) * pageSize,
-            ((nextPageNo - 1) * pageSize) + pageSize,
-          ),
-        ],
+        items: isPaginated
+          ? [
+            ...this.items.slice(
+              (nextPageNo - 1) * pageSize,
+              ((nextPageNo - 1) * pageSize) + pageSize,
+            ),
+          ]
+          : [
+            ...items,
+            ...this.items.slice(
+              (nextPageNo - 1) * pageSize,
+              ((nextPageNo - 1) * pageSize) + pageSize,
+            ),
+          ],
         loading: false,
         pageNo: nextPageNo,
         total: this.items.length,
@@ -68,6 +77,7 @@ class InfiniteScrollExampleContainer extends Component {
         total={total}
         loading={loading}
         setPageSize={setPageSize}
+        isPaginated={isPaginated}
       />
     );
   }

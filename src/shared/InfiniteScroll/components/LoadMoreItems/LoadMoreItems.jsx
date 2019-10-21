@@ -9,7 +9,7 @@ import { noop } from '../../../../utils';
 const LoadMoreItems = ({
   onPageNoChange, pageNo, pageSize, total,
   noOfItems, loading, hasError, loader, loadMoreContent,
-  disableSensor,
+  disableSensor, showBlocker, isPaginated,
 }) => {
   const checkLoaderVisibility = () => pageNo === 0 // eslint-disable-line
     ? true
@@ -18,7 +18,11 @@ const LoadMoreItems = ({
   return (
     <>
       {
-        noOfItems > 0 && checkLoaderVisibility() && loading
+        (!isPaginated
+        && (showBlocker
+          ? noOfItems > 0 && checkLoaderVisibility() && loading
+          : checkLoaderVisibility() && loading)
+        )
         && (
           <div className="infinite-loader">
             { loader || <Loader size={20} /> }
@@ -27,6 +31,7 @@ const LoadMoreItems = ({
       }
       {
         !hasError && checkLoaderVisibility() && !loading
+        && (!isPaginated || (isPaginated && noOfItems === 0))
         && (
           <InfiniteSensor
             active={!disableSensor}
@@ -36,7 +41,7 @@ const LoadMoreItems = ({
         )
       }
       {
-        !hasError && checkLoaderVisibility() && !loading
+        !hasError && !isPaginated && checkLoaderVisibility() && !loading
         && (
           <div className="load-more-wrapper">
             <button
@@ -64,6 +69,8 @@ LoadMoreItems.propTypes = {
   loader: PropTypes.node,
   loadMoreContent: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   disableSensor: PropTypes.bool,
+  showBlocker: PropTypes.bool,
+  isPaginated: PropTypes.bool,
 };
 
 LoadMoreItems.defaultProps = {
@@ -77,6 +84,8 @@ LoadMoreItems.defaultProps = {
   loader: null,
   loadMoreContent: 'Load More',
   disableSensor: false,
+  showBlocker: false,
+  isPaginated: false,
 };
 
 export default LoadMoreItems;

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { noop } from '../../../../utils';
 
 const NormalItems = ({
-  items, children, loadMore, footer,
+  items, children, loadMore, footer, pagination,
 }) => (
   <>
     {
@@ -18,6 +18,7 @@ const NormalItems = ({
       ))
     }
     {footer && <div className="footer">{footer}</div>}
+    {pagination}
     {loadMore}
   </>
 );
@@ -27,6 +28,7 @@ NormalItems.propTypes = {
   children: PropTypes.func,
   loadMore: PropTypes.node,
   footer: PropTypes.node,
+  pagination: PropTypes.node,
 };
 
 NormalItems.defaultProps = {
@@ -34,6 +36,7 @@ NormalItems.defaultProps = {
   children: noop,
   loadMore: <div />,
   footer: null,
+  pagination: null,
 };
 
 export default NormalItems;

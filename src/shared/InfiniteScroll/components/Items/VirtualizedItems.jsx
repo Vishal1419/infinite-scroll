@@ -11,7 +11,7 @@ import { usePrevious } from '../../../../utils/hooks';
 let cache;
 
 const VirtualizedItems = ({
-  items, loadMore, children, footer,
+  items, loadMore, children, footer, pagination,
 }) => {
   const previousItemsLength = usePrevious(items.length) || 0;
   const [scrollOffset, setScrollOffset] = useState(0);
@@ -87,6 +87,7 @@ const VirtualizedItems = ({
                       )}
                     />
                     {footer && <div className="footer">{footer}</div>}
+                    {pagination}
                     {loadMore}
                   </div>
                 )
@@ -104,6 +105,7 @@ VirtualizedItems.propTypes = {
   loadMore: PropTypes.node,
   children: PropTypes.func,
   footer: PropTypes.node,
+  pagination: PropTypes.node,
 };
 
 VirtualizedItems.defaultProps = {
@@ -111,6 +113,7 @@ VirtualizedItems.defaultProps = {
   loadMore: <div />,
   children: noop,
   footer: null,
+  pagination: null,
 };
 
 export default VirtualizedItems;

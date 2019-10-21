@@ -4,8 +4,9 @@ import BlockUI from 'react-block-ui';
 
 import Items from './components/Items/Items';
 import Loader from './components/Loader/Loader';
-import { noop } from '../../utils';
 import LoadMoreItems from './components/LoadMoreItems/LoadMoreItems';
+import Pagination from './components/Pagination/PaginationContainer';
+import { noop } from '../../utils';
 
 const InfiniteScroll = ({
   children, noData,
@@ -14,14 +15,15 @@ const InfiniteScroll = ({
   loading, hasError,
   blocker, loader, showBlocker, loadMoreContent,
   isVirtualized, header, footer, disableSensor,
+  isPaginated,
 }) => (
   <div className="infinite-scroll">
     <BlockUI
       tag="div"
       className="full-min-height"
-      blocking={showBlocker && (items && items.length === 0) && loading}
+      blocking={isPaginated ? loading : (showBlocker && (items && items.length === 0) && loading)}
       loader={blocker || <Loader />}
-      renderChildren={items.length > 0}
+      renderChildren={isPaginated && items.length > 0}
     >
       {
         items.length === 0 && !loading
@@ -44,6 +46,17 @@ const InfiniteScroll = ({
                     loader={loader}
                     loadMoreContent={loadMoreContent}
                     disableSensor={disableSensor}
+                    showBlocker={showBlocker}
+                    isPaginated={isPaginated}
+                  />
+                )}
+                pagination={isPaginated && (
+                  <Pagination
+                    activePage={pageNo}
+                    onChangeActivePage={onPageNoChange}
+                    pageSize={pageSize}
+                    totalRecords={total}
+                    pageNeighbours={2}
                   />
                 )}
                 isVirtualized={isVirtualized}
@@ -75,6 +88,7 @@ InfiniteScroll.propTypes = {
   header: PropTypes.node,
   footer: PropTypes.node,
   disableSensor: PropTypes.bool,
+  isPaginated: PropTypes.bool,
 };
 
 InfiniteScroll.defaultProps = {
@@ -94,6 +108,7 @@ InfiniteScroll.defaultProps = {
   header: null,
   footer: null,
   disableSensor: false,
+  isPaginated: false,
 };
 
 export default InfiniteScroll;

@@ -1,0 +1,15 @@
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  button {
+    cursor: pointer;
+    &:focus {
+      outline: none;
+    }
+    &.active {
+      background-color: #305cad;
+      color: #fff;
+    }
+  }
+}

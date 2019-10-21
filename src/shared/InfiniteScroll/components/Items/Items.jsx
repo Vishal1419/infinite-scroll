@@ -7,7 +7,7 @@ import NormalItems from './NormalItems';
 import { noop } from '../../../../utils';
 
 const Items = ({
-  items, loadMore, children, isVirtualized, footer,
+  items, loadMore, children, isVirtualized, footer, pagination,
 }) => (
   <div className="infinite-scroll-items">
     {
@@ -17,6 +17,7 @@ const Items = ({
             items={items}
             footer={footer}
             loadMore={loadMore}
+            pagination={pagination}
           >
             {children}
           </VirtualizedItems>
@@ -26,6 +27,7 @@ const Items = ({
             items={items}
             footer={footer}
             loadMore={loadMore}
+            pagination={pagination}
           >
             {children}
           </NormalItems>
@@ -40,6 +42,7 @@ Items.propTypes = {
   children: PropTypes.func,
   isVirtualized: PropTypes.bool,
   footer: PropTypes.node,
+  pagination: PropTypes.node,
 };
 
 Items.defaultProps = {
@@ -48,6 +51,7 @@ Items.defaultProps = {
   children: noop,
   isVirtualized: true,
   footer: null,
+  pagination: null,
 };
 
 export default Items;

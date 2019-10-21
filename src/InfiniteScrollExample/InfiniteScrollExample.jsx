@@ -7,7 +7,7 @@ const noop = () => {};
 
 const InfiniteScrollExample = ({
   getItems, flushItems, items,
-  pageNo, pageSize, total, loading, setPageSize,
+  pageNo, pageSize, total, loading, setPageSize, isPaginated,
 }) => (
   <>
     <InfiniteScroll
@@ -33,7 +33,7 @@ const InfiniteScrollExample = ({
         </div>
       )}
       footer={`total ${total}`}
-      disableSensor
+      isPaginated={isPaginated}
     >
       {
         (item) => (
@@ -53,6 +53,7 @@ InfiniteScrollExample.propTypes = {
   total: PropTypes.number,
   loading: PropTypes.bool,
   setPageSize: PropTypes.func,
+  isPaginated: PropTypes.bool,
 };
 
 InfiniteScrollExample.defaultProps = {
@@ -64,6 +65,7 @@ InfiniteScrollExample.defaultProps = {
   total: 0,
   loading: false,
   setPageSize: noop,
+  isPaginated: false,
 };
 
 export default InfiniteScrollExample;
