@@ -35,9 +35,9 @@ const VirtualizedItems = ({
     <WindowScroller
       ref={windowScrollerRef}
       scrollElement={
-        windowScrollerRef && windowScrollerRef.current
-          ? getScrollParent(windowScrollerRef.current)
-          : window
+        (windowScrollerRef && windowScrollerRef.current
+        && getScrollParent(windowScrollerRef.current))
+        || window
       }
     >
       {

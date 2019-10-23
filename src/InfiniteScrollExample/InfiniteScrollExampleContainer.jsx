@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import InfiniteScrollExample from './InfiniteScrollExample';
 
-const isPaginated = true;
+const isPaginated = false;
 
 class InfiniteScrollExampleContainer extends Component {
   constructor(props) {

@@ -7,11 +7,11 @@ import NormalItems from './NormalItems';
 import { noop } from '../../../../utils';
 
 const Items = ({
-  items, loadMore, children, isVirtualized, footer, pagination,
+  items, loadMore, children, isVirtualized, footer, pagination, orientation,
 }) => (
-  <div className="infinite-scroll-items">
+  <div className="infinite-scroll-items-container">
     {
-      isVirtualized
+      isVirtualized && orientation === 'vertical' // limiting to use virtualized list only for vertical orientation
         ? (
           <VirtualizedItems
             items={items}
@@ -28,6 +28,7 @@ const Items = ({
             footer={footer}
             loadMore={loadMore}
             pagination={pagination}
+            orientation={orientation}
           >
             {children}
           </NormalItems>
@@ -43,6 +44,7 @@ Items.propTypes = {
   isVirtualized: PropTypes.bool,
   footer: PropTypes.node,
   pagination: PropTypes.node,
+  orientation: PropTypes.oneOf(['horizontal', 'vertical']),
 };
 
 Items.defaultProps = {
@@ -52,6 +54,7 @@ Items.defaultProps = {
   isVirtualized: true,
   footer: null,
   pagination: null,
+  orientation: 'vertical',
 };
 
 export default Items;

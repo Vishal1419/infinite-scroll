@@ -16,7 +16,7 @@ const InfiniteScrollContainer = ({
   didMount, blockInitialCall,
   blocker, loader, showBlocker, loadMoreContent,
   isVirtualized, header, footer, disableSensor,
-  isPaginated,
+  isPaginated, orientation,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
 
@@ -69,6 +69,7 @@ const InfiniteScrollContainer = ({
       footer={footer}
       disableSensor={disableSensor}
       isPaginated={isPaginated}
+      orientation={orientation}
     >
       {children}
     </InfiniteScroll>
@@ -98,6 +99,7 @@ InfiniteScrollContainer.propTypes = {
   footer: PropTypes.node,
   disableSensor: PropTypes.bool,
   isPaginated: PropTypes.bool,
+  orientation: PropTypes.oneOf(['horizontal', 'vertical']),
 };
 
 InfiniteScrollContainer.defaultProps = {
@@ -122,6 +124,7 @@ InfiniteScrollContainer.defaultProps = {
   footer: null,
   disableSensor: false,
   isPaginated: false,
+  orientation: 'vertical',
 };
 
 export default InfiniteScrollContainer;

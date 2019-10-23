@@ -1,5 +1,16 @@
-.infinite-scroll-items {
-  .infinite-scroll-item {
-    
+.infinite-scroll-items-container {
+  .infinite-scroll-items {
+    &.horizontal {
+      display: flex;
+      flex-direction: row;
+    }
+
+    &.vertical {
+      // flex-direction: column;
+    }
+
+    .infinite-scroll-item {
+      
+    }
   }
 }

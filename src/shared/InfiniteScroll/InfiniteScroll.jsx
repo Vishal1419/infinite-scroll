@@ -15,7 +15,7 @@ const InfiniteScroll = ({
   loading, hasError,
   blocker, loader, showBlocker, loadMoreContent,
   isVirtualized, header, footer, disableSensor,
-  isPaginated,
+  isPaginated, orientation,
 }) => (
   <div className="infinite-scroll">
     <BlockUI
@@ -60,6 +60,7 @@ const InfiniteScroll = ({
                   />
                 )}
                 isVirtualized={isVirtualized}
+                orientation={orientation}
               >
                 {children}
               </Items>
@@ -89,6 +90,7 @@ InfiniteScroll.propTypes = {
   footer: PropTypes.node,
   disableSensor: PropTypes.bool,
   isPaginated: PropTypes.bool,
+  orientation: PropTypes.oneOf(['horizontal', 'vertical']),
 };
 
 InfiniteScroll.defaultProps = {
@@ -109,6 +111,7 @@ InfiniteScroll.defaultProps = {
   footer: null,
   disableSensor: false,
   isPaginated: false,
+  orientation: 'vertical',
 };
 
 export default InfiniteScroll;

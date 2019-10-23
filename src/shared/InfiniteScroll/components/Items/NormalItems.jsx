@@ -1,25 +1,29 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 import { noop } from '../../../../utils';
 
 const NormalItems = ({
-  items, children, loadMore, footer, pagination,
+  items, children, loadMore, footer, pagination, orientation,
 }) => (
   <>
-    {
-      items.map((item, index) => (
-        <div
-          key={children(item).props['data-key'] || index}
-          className="infinite-scroll-item"
-        >
-          {children(item, index)}
-        </div>
-      ))
-    }
+    <div className={classNames('infinite-scroll-items', orientation)}>
+      {
+        items.map((item, index) => (
+          <div
+            key={children(item).props['data-key'] || index}
+            className="infinite-scroll-item"
+          >
+            {children(item, index)}
+          </div>
+        ))
+      }
+      {orientation === 'horizontal' && loadMore}
+    </div>
     {footer && <div className="footer">{footer}</div>}
+    {orientation === 'vertical' && loadMore}
     {pagination}
-    {loadMore}
   </>
 );
 
@@ -29,6 +33,7 @@ NormalItems.propTypes = {
   loadMore: PropTypes.node,
   footer: PropTypes.node,
   pagination: PropTypes.node,
+  orientation: PropTypes.oneOf(['horizontal', 'vertical']),
 };
 
 NormalItems.defaultProps = {
@@ -37,6 +42,7 @@ NormalItems.defaultProps = {
   loadMore: <div />,
   footer: null,
   pagination: null,
+  orientation: 'vertical',
 };
 
 export default NormalItems;
