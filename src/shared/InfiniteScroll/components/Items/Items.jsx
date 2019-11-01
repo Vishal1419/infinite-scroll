@@ -9,11 +9,11 @@ import { noop } from '../../../../utils';
 
 const Items = ({
   items, loadMore, children, isVirtualized, footer, pagination, orientation, viewType,
-  headerHeight,
+  floatingLoader, headerHeight,
 }) => (
   <div className={classNames('infinite-scroll-items-container', orientation, viewType)} style={{ height: `calc(100% - ${headerHeight}px)` }}>
     {
-      isVirtualized && orientation === 'vertical' && viewType === 'list' // limiting to use virtualized list only for vertical orientation
+      isVirtualized
         ? (
           <VirtualizedItems
             items={items}
@@ -34,6 +34,7 @@ const Items = ({
             pagination={pagination}
             orientation={orientation}
             viewType={viewType}
+            floatingLoader={floatingLoader}
           >
             {children}
           </NormalItems>
@@ -52,6 +53,7 @@ Items.propTypes = {
   orientation: PropTypes.oneOf(['horizontal', 'vertical']),
   viewType: PropTypes.oneOf(['list', 'grid']),
   headerHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  floatingLoader: PropTypes.bool,
 };
 
 Items.defaultProps = {
@@ -64,6 +66,7 @@ Items.defaultProps = {
   orientation: 'vertical',
   viewType: 'list',
   headerHeight: 0,
+  floatingLoader: false,
 };
 
 export default Items;

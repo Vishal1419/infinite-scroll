@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import { noop, getElementHeight } from '../../../../utils';
 
 const NormalItems = ({
-  items, children, loadMore, footer, pagination, orientation, viewType,
+  items, children, loadMore, footer, pagination, orientation, viewType, floatingLoader,
 }) => {
   const footerRef = useRef(null);
   return (
@@ -29,11 +29,12 @@ const NormalItems = ({
               </div>
             ))
           }
+          {floatingLoader && viewType === 'grid' && loadMore}
         </div>
-        {orientation === 'horizontal' && loadMore}
+        {!(floatingLoader && viewType === 'grid') && orientation === 'horizontal' && loadMore}
       </div>
       {footer && <div ref={footerRef} className="footer">{footer}</div>}
-      {orientation === 'vertical' && loadMore}
+      {!(floatingLoader && viewType === 'grid') && orientation === 'vertical' && loadMore}
       {pagination}
     </>
   );
@@ -47,6 +48,7 @@ NormalItems.propTypes = {
   pagination: PropTypes.node,
   orientation: PropTypes.oneOf(['horizontal', 'vertical']),
   viewType: PropTypes.oneOf(['list', 'grid']),
+  floatingLoader: PropTypes.bool,
 };
 
 NormalItems.defaultProps = {
@@ -57,6 +59,7 @@ NormalItems.defaultProps = {
   pagination: null,
   orientation: 'vertical',
   viewType: 'list',
+  floatingLoader: false,
 };
 
 export default NormalItems;

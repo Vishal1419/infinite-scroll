@@ -15,7 +15,7 @@ const InfiniteScroll = ({
   loading, hasError,
   blocker, loader, showBlocker, loadMoreContent,
   isVirtualized, header, footer, disableSensor,
-  isPaginated, orientation, viewType,
+  isPaginated, orientation, viewType, floatingLoader,
   headerRef, setHeaderRef,
 }) => (
   <div className="infinite-scroll">
@@ -63,6 +63,7 @@ const InfiniteScroll = ({
                 isVirtualized={isVirtualized}
                 orientation={orientation}
                 viewType={viewType}
+                floatingLoader={floatingLoader}
                 headerHeight={(headerRef && getElementHeight(headerRef)) || 0}
               >
                 {children}
@@ -95,6 +96,7 @@ InfiniteScroll.propTypes = {
   isPaginated: PropTypes.bool,
   orientation: PropTypes.oneOf(['horizontal', 'vertical']),
   viewType: PropTypes.oneOf(['list', 'grid']),
+  floatingLoader: PropTypes.bool,
   headerRef: PropTypes.instanceOf(Object),
   setHeaderRef: PropTypes.func,
 };
@@ -119,6 +121,7 @@ InfiniteScroll.defaultProps = {
   isPaginated: false,
   orientation: 'vertical',
   viewType: 'list',
+  floatingLoader: false,
   headerRef: {},
   setHeaderRef: noop,
 };
