@@ -3,18 +3,22 @@ body {
 }
 
 .infinite-scroll {
+  height: 100%;
   .header, .footer {
-    margin: 10px 0;
+    padding: 10px 0;
     display: flex;
     justify-content: center;
   }
   .block-ui-container {
-    min-height: 17em;
+    height: 100%;
   }
   .loader-container {
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+  .full-height {
+    height: 100%;
   }
   .full-min-height {
     min-height: 100%;

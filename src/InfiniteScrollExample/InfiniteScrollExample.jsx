@@ -34,7 +34,9 @@ const InfiniteScrollExample = ({
       )}
       footer={`total ${total}`}
       isPaginated={isPaginated}
-      orientation="horizontal"
+      // orientation="horizontal"
+      // viewType="grid"
+      // disableSensor
     >
       {
         (item) => (

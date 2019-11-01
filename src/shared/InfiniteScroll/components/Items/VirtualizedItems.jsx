@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import {
   List, AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache,
 } from 'react-virtualized';
@@ -11,7 +12,7 @@ import { usePrevious } from '../../../../utils/hooks';
 let cache;
 
 const VirtualizedItems = ({
-  items, loadMore, children, footer, pagination,
+  items, loadMore, children, footer, pagination, orientation, viewType,
 }) => {
   const previousItemsLength = usePrevious(items.length) || 0;
   const [scrollOffset, setScrollOffset] = useState(0);
@@ -55,7 +56,7 @@ const VirtualizedItems = ({
             <AutoSizer disableHeight>
               {
                 ({ width }) => (
-                  <div style={{ width }}>
+                  <div className={classNames('infinite-scroll-items', orientation, viewType)} style={{ width }}>
                     <List
                       ref={registerChild}
                       width={width}
@@ -106,6 +107,8 @@ VirtualizedItems.propTypes = {
   children: PropTypes.func,
   footer: PropTypes.node,
   pagination: PropTypes.node,
+  orientation: PropTypes.oneOf(['horizontal', 'vertical']),
+  viewType: PropTypes.oneOf(['list', 'grid']),
 };
 
 VirtualizedItems.defaultProps = {
@@ -114,6 +117,8 @@ VirtualizedItems.defaultProps = {
   children: noop,
   footer: null,
   pagination: null,
+  orientation: 'vertical',
+  viewType: 'list',
 };
 
 export default VirtualizedItems;

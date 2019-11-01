@@ -6,7 +6,7 @@ import Items from './components/Items/Items';
 import Loader from './components/Loader/Loader';
 import LoadMoreItems from './components/LoadMoreItems/LoadMoreItems';
 import Pagination from './components/Pagination/PaginationContainer';
-import { noop } from '../../utils';
+import { noop, getElementHeight } from '../../utils';
 
 const InfiniteScroll = ({
   children, noData,
@@ -15,12 +15,13 @@ const InfiniteScroll = ({
   loading, hasError,
   blocker, loader, showBlocker, loadMoreContent,
   isVirtualized, header, footer, disableSensor,
-  isPaginated, orientation,
+  isPaginated, orientation, viewType,
+  headerRef, setHeaderRef,
 }) => (
   <div className="infinite-scroll">
     <BlockUI
       tag="div"
-      className="full-min-height"
+      className="full-height full-min-height"
       blocking={isPaginated ? loading : (showBlocker && (items && items.length === 0) && loading)}
       loader={blocker || <Loader />}
       renderChildren={isPaginated && items.length > 0}
@@ -30,7 +31,7 @@ const InfiniteScroll = ({
           ? <div className="no-data">{noData}</div>
           : (
             <>
-              {header && <div className="header">{header}</div>}
+              {header && <div ref={(ref) => setHeaderRef(ref)} className="header">{header}</div>}
               <Items
                 items={items}
                 footer={footer}
@@ -61,6 +62,8 @@ const InfiniteScroll = ({
                 )}
                 isVirtualized={isVirtualized}
                 orientation={orientation}
+                viewType={viewType}
+                headerHeight={(headerRef && getElementHeight(headerRef)) || 0}
               >
                 {children}
               </Items>
@@ -91,6 +94,9 @@ InfiniteScroll.propTypes = {
   disableSensor: PropTypes.bool,
   isPaginated: PropTypes.bool,
   orientation: PropTypes.oneOf(['horizontal', 'vertical']),
+  viewType: PropTypes.oneOf(['list', 'grid']),
+  headerRef: PropTypes.instanceOf(Object),
+  setHeaderRef: PropTypes.func,
 };
 
 InfiniteScroll.defaultProps = {
@@ -112,6 +118,9 @@ InfiniteScroll.defaultProps = {
   disableSensor: false,
   isPaginated: false,
   orientation: 'vertical',
+  viewType: 'list',
+  headerRef: {},
+  setHeaderRef: noop,
 };
 
 export default InfiniteScroll;

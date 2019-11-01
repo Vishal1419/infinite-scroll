@@ -16,11 +16,13 @@ const InfiniteScrollContainer = ({
   didMount, blockInitialCall,
   blocker, loader, showBlocker, loadMoreContent,
   isVirtualized, header, footer, disableSensor,
-  isPaginated, orientation,
+  isPaginated, orientation, viewType,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
 
   const previousPageSize = usePrevious(pageSize) || pageSize;
+
+  const [headerRef, setHeaderRef] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -70,6 +72,10 @@ const InfiniteScrollContainer = ({
       disableSensor={disableSensor}
       isPaginated={isPaginated}
       orientation={orientation}
+      viewType={viewType}
+      // headerRef={headerRef}
+      headerRef={headerRef}
+      setHeaderRef={setHeaderRef}
     >
       {children}
     </InfiniteScroll>
@@ -100,6 +106,7 @@ InfiniteScrollContainer.propTypes = {
   disableSensor: PropTypes.bool,
   isPaginated: PropTypes.bool,
   orientation: PropTypes.oneOf(['horizontal', 'vertical']),
+  viewType: PropTypes.oneOf(['list', 'grid']),
 };
 
 InfiniteScrollContainer.defaultProps = {
@@ -125,6 +132,7 @@ InfiniteScrollContainer.defaultProps = {
   disableSensor: false,
   isPaginated: false,
   orientation: 'vertical',
+  viewType: 'list',
 };
 
 export default InfiniteScrollContainer;

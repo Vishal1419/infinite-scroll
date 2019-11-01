@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 import './items.scss';
 import VirtualizedItems from './VirtualizedItems';
@@ -7,17 +8,20 @@ import NormalItems from './NormalItems';
 import { noop } from '../../../../utils';
 
 const Items = ({
-  items, loadMore, children, isVirtualized, footer, pagination, orientation,
+  items, loadMore, children, isVirtualized, footer, pagination, orientation, viewType,
+  headerHeight,
 }) => (
-  <div className="infinite-scroll-items-container">
+  <div className={classNames('infinite-scroll-items-container', orientation, viewType)} style={{ height: `calc(100% - ${headerHeight}px)` }}>
     {
-      isVirtualized && orientation === 'vertical' // limiting to use virtualized list only for vertical orientation
+      isVirtualized && orientation === 'vertical' && viewType === 'list' // limiting to use virtualized list only for vertical orientation
         ? (
           <VirtualizedItems
             items={items}
             footer={footer}
             loadMore={loadMore}
             pagination={pagination}
+            orientation={orientation}
+            viewType={viewType}
           >
             {children}
           </VirtualizedItems>
@@ -29,6 +33,7 @@ const Items = ({
             loadMore={loadMore}
             pagination={pagination}
             orientation={orientation}
+            viewType={viewType}
           >
             {children}
           </NormalItems>
@@ -45,6 +50,8 @@ Items.propTypes = {
   footer: PropTypes.node,
   pagination: PropTypes.node,
   orientation: PropTypes.oneOf(['horizontal', 'vertical']),
+  viewType: PropTypes.oneOf(['list', 'grid']),
+  headerHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 };
 
 Items.defaultProps = {
@@ -55,6 +62,8 @@ Items.defaultProps = {
   footer: null,
   pagination: null,
   orientation: 'vertical',
+  viewType: 'list',
+  headerHeight: 0,
 };
 
 export default Items;

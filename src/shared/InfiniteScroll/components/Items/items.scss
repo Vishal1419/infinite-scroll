@@ -1,16 +1,41 @@
 .infinite-scroll-items-container {
-  .infinite-scroll-items {
+  .infinite-scroll-items-wrapper {
     &.horizontal {
       display: flex;
-      flex-direction: row;
     }
 
-    &.vertical {
-      // flex-direction: column;
-    }
+    .infinite-scroll-items {
+      display: flex;
 
-    .infinite-scroll-item {
+      &.horizontal {
+        &.list {
+          flex-direction: row;
+        }
+        &.grid {
+          flex-direction: column;
+          flex-wrap: wrap;
+          align-content: flex-start;
+          height: 100%;
+        }
+      }
+
+      &.vertical {
+        &.list {
+          flex-direction: column;
+        }
+        &.grid {
+          flex-direction: row;
+          flex-wrap: wrap;
+          align-content: flex-start;
+        }
+      }
       
+      .infinite-scroll-item {
+        display: flex;
+        > * {
+          flex: 1;
+        }
+      }
     }
   }
 }
