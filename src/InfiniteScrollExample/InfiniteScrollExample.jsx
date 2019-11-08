@@ -24,7 +24,7 @@ const InfiniteScrollExample = ({
       }}
       showBlocker
       loadMoreContent="Load More Data"
-      // isVirtualized={false}
+      isVirtualized={false}
       header={(
         <div>
           <button type="button" onClick={() => setPageSize(2)}>2</button>
@@ -37,7 +37,10 @@ const InfiniteScrollExample = ({
       orientation="horizontal"
       // viewType="grid"
       // disableSensor
-      floatingLoader
+      // floatingLoader
+      showScrollButtons="hover"
+      scrollButtonsPosition="outside"
+      elementsToScrollAtATime={4}
     >
       {
         (item) => (

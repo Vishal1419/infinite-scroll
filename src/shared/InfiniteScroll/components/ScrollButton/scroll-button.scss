@@ -1,0 +1,55 @@
+.scroll-button-container {
+  &.show-on-hover {
+    opacity: 0.1;
+    transition: opacity 0.2s ease-in;
+  }
+  &.outside {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &.vertical {
+      width: 100%;
+      padding: 8px 0;
+      &.previous {
+        top: 0;
+      }
+      &.next {
+        bottom: 0;
+      }
+    }
+    &.horizontal {
+      height: calc(100% - 15px);
+      padding: 0 8px;
+      &.previous {
+        left: 0;
+      }
+      &.next {
+        right: 0;
+      }
+    }
+  }
+  &.inside {
+    position: absolute;
+    z-index: 1000;
+    &.vertical {
+      left: 50%;
+      transform: translateX(-50%);
+      &.previous {
+        top: 8px;
+      }
+      &.next {
+        bottom: 8px;
+      }
+    }
+    &.horizontal {
+      top: 50%;
+      transform: translateY(-50%);
+      &.previous {
+        left: 8px;
+      }
+      &.next {
+        right: 8px;
+      }
+    }
+  }
+}

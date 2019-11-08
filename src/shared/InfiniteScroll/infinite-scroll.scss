@@ -2,30 +2,54 @@ body {
   margin: 0;
 }
 
-.infinite-scroll {
+.infinite-scroll-container {
   height: 100%;
-  .header, .footer {
-    padding: 10px 0;
-    display: flex;
-    justify-content: center;
+  position: relative;
+  &:hover {
+    .scroll-button-container {
+      &.show-on-hover {
+        opacity: 1;
+      }
+    }
   }
-  .block-ui-container {
+  &.horizontal {
+    &.scroll-buttons-visible {
+      display: flex;
+    }
+  }
+  .infinite-scroll {
     height: 100%;
-  }
-  .loader-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .full-height {
-    height: 100%;
-  }
-  .full-min-height {
-    min-height: 100%;
-  }
-  .no-data {
-    width: 100%;
-    text-align: center;
-    padding: 64px 0;
+    scroll-behavior: smooth;
+    &.scroll-buttons-visible {
+      overflow: auto;
+      width: 100%;
+    }
+    .header, .footer {
+      padding: 10px 0;
+    }
+    .infinite-scroll-content {
+      &.horizontal {
+        height: 100%;
+      }
+    }
+    .block-ui-container {
+      height: 100%;
+    }
+    .loader-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .full-height {
+      height: 100%;
+    }
+    .full-min-height {
+      min-height: 100%;
+    }
+    .no-data {
+      width: 100%;
+      text-align: center;
+      padding: 64px 0;
+    }
   }
 }

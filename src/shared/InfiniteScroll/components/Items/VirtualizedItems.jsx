@@ -12,7 +12,7 @@ import { usePrevious } from '../../../../utils/hooks';
 let cache;
 
 const VirtualizedItems = ({
-  items, loadMore, children, footer, pagination, orientation, viewType,
+  items, loadMore, children, header, footer, pagination, orientation, viewType,
 }) => {
   const previousItemsLength = usePrevious(items.length) || 0;
   const [scrollOffset, setScrollOffset] = useState(0);
@@ -57,6 +57,7 @@ const VirtualizedItems = ({
               {
                 ({ width }) => (
                   <div className={classNames('infinite-scroll-items', orientation, viewType)} style={{ width }}>
+                    {header && <div className="header">{header}</div>}
                     <List
                       ref={registerChild}
                       width={width}
@@ -105,6 +106,7 @@ VirtualizedItems.propTypes = {
   items: PropTypes.instanceOf(Array),
   loadMore: PropTypes.node,
   children: PropTypes.func,
+  header: PropTypes.node,
   footer: PropTypes.node,
   pagination: PropTypes.node,
   orientation: PropTypes.oneOf(['horizontal', 'vertical']),
@@ -115,6 +117,7 @@ VirtualizedItems.defaultProps = {
   items: [],
   loadMore: <div />,
   children: noop,
+  header: null,
   footer: null,
   pagination: null,
   orientation: 'vertical',

@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import 'react-block-ui/style.css';
 import 'loaders.css/loaders.min.css';
 
 import './infinite-scroll.scss';
 import InfiniteScroll from './InfiniteScroll';
-import { noop } from '../../utils';
+import {
+  noop, debounce, scrollToIndex, getElementDimensions, isInViewport,
+  getElementWidth, getElementHeight,
+} from '../../utils';
 import { usePrevious } from '../../utils/hooks';
 
 const InfiniteScrollContainer = ({
@@ -17,12 +20,17 @@ const InfiniteScrollContainer = ({
   blocker, loader, showBlocker, loadMoreContent,
   isVirtualized, header, footer, disableSensor,
   isPaginated, orientation, viewType, floatingLoader,
+  showScrollButtons, scrollButtonsPosition, elementsToScrollAtATime,
 }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
+  const [previousButtonRef, setPreviousButtonRef] = useState(null);
+  const [isPreviousButtonEnabled, setIsPreviousButtonEnabled] = useState(false);
+  const [nextButtonRef, setNextButtonRef] = useState(null);
+  const [isNextButtonEnabled, setIsNextButtonEnabled] = useState(false);
 
   const previousPageSize = usePrevious(pageSize) || pageSize;
-
-  const [headerRef, setHeaderRef] = useState(null);
+  const infiniteScrollRef = useRef(null);
 
   useEffect(() => {
     (async () => {
@@ -43,12 +51,58 @@ const InfiniteScrollContainer = ({
     if (previousPageSize !== pageSize) {
       flushItems();
       getItems(1, pageSize);
+      setCurrentIndex(0);
     }
   }, [pageSize]);
 
   const onPageNoChange = (nextPage) => {
     if (isMounted) {
       getItems(nextPage, pageSize);
+    }
+  };
+
+  useEffect(() => {
+    if (!isVirtualized && viewType === 'list' && showScrollButtons && elementsToScrollAtATime) { // limitation
+      const infiniteScrollItems = document.getElementsByClassName('infinite-scroll-item');
+      const infiniteScroll = infiniteScrollRef && infiniteScrollRef.current;
+      const scrollStart = scrollToIndex(
+        infiniteScroll, infiniteScrollItems, currentIndex, orientation,
+      );
+      if (scrollStart === 0) setIsPreviousButtonEnabled(false);
+      else setIsPreviousButtonEnabled(true);
+      if (
+        orientation === 'horizontal'
+          ? infiniteScroll.scrollWidth - scrollStart <= getElementWidth(infiniteScroll)
+          : infiniteScroll.scrollHeight - scrollStart <= getElementHeight(infiniteScroll)
+      ) {
+        setIsNextButtonEnabled(false);
+      } else setIsNextButtonEnabled(true);
+    }
+  }, [currentIndex, items]);
+
+  const handlePreviousButtonClick = () => {
+    setCurrentIndex((prevIndex) => prevIndex - elementsToScrollAtATime);
+  };
+
+  const handleNextButtonClick = () => {
+    setCurrentIndex((prevIndex) => prevIndex + elementsToScrollAtATime);
+  };
+
+  const handleScroll = () => {
+    if (!isVirtualized && viewType === 'list' && showScrollButtons && elementsToScrollAtATime) { // limitation
+      debounce(() => {
+        const infiniteScrollItems = document.getElementsByClassName('infinite-scroll-item');
+        const infiniteScroll = infiniteScrollRef && infiniteScrollRef.current;
+        const viewportDimensions = getElementDimensions(infiniteScroll, orientation);
+        [...infiniteScrollItems].every((item, index, self) => {
+          if (isInViewport(viewportDimensions, item, orientation, 0.5)) {
+            setCurrentIndex(index);
+            scrollToIndex(infiniteScroll, self, index, orientation);
+            return false;
+          }
+          return true;
+        });
+      }, 200);
     }
   };
 
@@ -74,8 +128,24 @@ const InfiniteScrollContainer = ({
       orientation={orientation}
       viewType={viewType}
       floatingLoader={orientation === 'horizontal' && viewType === 'grid' ? true : floatingLoader} // limitation
-      headerRef={headerRef}
-      setHeaderRef={setHeaderRef}
+      infiniteScrollRef={infiniteScrollRef}
+      showScrollButtons={viewType === 'list' && !isVirtualized && showScrollButtons} // limitation
+      scrollButtonsPosition={
+        showScrollButtons === 'hover' // eslint-disable-line
+          ? 'inside'
+          : orientation === 'horizontal' && viewType === 'grid' // limitation
+            ? 'inside'
+            : scrollButtonsPosition
+      }
+      previousButtonRef={previousButtonRef}
+      setPreviousButtonRef={setPreviousButtonRef}
+      isPreviousButtonEnabled={isPreviousButtonEnabled}
+      handlePreviousButtonClick={handlePreviousButtonClick}
+      nextButtonRef={nextButtonRef}
+      setNextButtonRef={setNextButtonRef}
+      isNextButtonEnabled={isNextButtonEnabled}
+      handleNextButtonClick={handleNextButtonClick}
+      handleScroll={handleScroll}
     >
       {children}
     </InfiniteScroll>
@@ -108,6 +178,9 @@ InfiniteScrollContainer.propTypes = {
   orientation: PropTypes.oneOf(['horizontal', 'vertical']),
   viewType: PropTypes.oneOf(['list', 'grid']),
   floatingLoader: PropTypes.bool,
+  showScrollButtons: PropTypes.oneOf([true, false, 'hover']),
+  scrollButtonsPosition: PropTypes.oneOf(['inside', 'outside']),
+  elementsToScrollAtATime: PropTypes.number,
 };
 
 InfiniteScrollContainer.defaultProps = {
@@ -135,6 +208,9 @@ InfiniteScrollContainer.defaultProps = {
   orientation: 'vertical',
   viewType: 'list',
   floatingLoader: false,
+  showScrollButtons: false,
+  scrollButtonsPosition: 'inside',
+  elementsToScrollAtATime: 0,
 };
 
 export default InfiniteScrollContainer;

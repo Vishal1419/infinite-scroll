@@ -1,20 +1,28 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import { noop, getElementHeight } from '../../../../utils';
 
 const NormalItems = ({
-  items, children, loadMore, footer, pagination, orientation, viewType, floatingLoader,
+  items, children, loadMore, header, footer, pagination, orientation, viewType, floatingLoader,
 }) => {
+  const headerRef = useRef(null);
   const footerRef = useRef(null);
+
+  const [, forceUpdate] = useState(null);
+  useEffect(() => {
+    forceUpdate();
+  }, []);
+
   return (
     <>
+      {header && <div ref={headerRef} id="infinite-scroll-header" className="header">{header}</div>}
       <div
         className={classNames('infinite-scroll-items-wrapper', orientation, viewType)}
         style={{
           height: orientation === 'horizontal'
-            ? `calc(100% - ${(footerRef && footerRef.current && getElementHeight(footerRef.current)) || 0}px)`
+            ? `calc(100% - (${((headerRef && headerRef.current && getElementHeight(headerRef.current)) || 0) + ((footerRef && footerRef.current && getElementHeight(footerRef.current)) || 0)}px))`
             : 'unset',
         }}
       >
@@ -44,6 +52,7 @@ NormalItems.propTypes = {
   items: PropTypes.instanceOf(Array),
   children: PropTypes.func,
   loadMore: PropTypes.node,
+  header: PropTypes.node,
   footer: PropTypes.node,
   pagination: PropTypes.node,
   orientation: PropTypes.oneOf(['horizontal', 'vertical']),
@@ -55,6 +64,7 @@ NormalItems.defaultProps = {
   items: [],
   children: noop,
   loadMore: <div />,
+  header: null,
   footer: null,
   pagination: null,
   orientation: 'vertical',

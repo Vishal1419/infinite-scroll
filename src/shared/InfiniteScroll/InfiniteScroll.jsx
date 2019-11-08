@@ -1,12 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import BlockUI from 'react-block-ui';
 
+import ScrollButton from './components/ScrollButton/ScrollButtonContainer';
 import Items from './components/Items/Items';
 import Loader from './components/Loader/Loader';
 import LoadMoreItems from './components/LoadMoreItems/LoadMoreItems';
 import Pagination from './components/Pagination/PaginationContainer';
-import { noop, getElementHeight } from '../../utils';
+import { noop, getElementHeight, getElementWidth } from '../../utils';
 
 const InfiniteScroll = ({
   children, noData,
@@ -16,64 +18,133 @@ const InfiniteScroll = ({
   blocker, loader, showBlocker, loadMoreContent,
   isVirtualized, header, footer, disableSensor,
   isPaginated, orientation, viewType, floatingLoader,
-  headerRef, setHeaderRef,
-}) => (
-  <div className="infinite-scroll">
-    <BlockUI
-      tag="div"
-      className="full-height full-min-height"
-      blocking={isPaginated ? loading : (showBlocker && (items && items.length === 0) && loading)}
-      loader={blocker || <Loader />}
-      renderChildren={isPaginated && items.length > 0}
-    >
+  infiniteScrollRef,
+  showScrollButtons, scrollButtonsPosition,
+  previousButtonRef, setPreviousButtonRef, isPreviousButtonEnabled, handlePreviousButtonClick,
+  nextButtonRef, setNextButtonRef, isNextButtonEnabled, handleNextButtonClick,
+  handleScroll,
+}) => {
+  const _showScrollButtons = showScrollButtons
+  && !(
+    infiniteScrollRef && infiniteScrollRef.current
+    && (orientation === 'horizontal'
+      ? (infiniteScrollRef.current.offsetWidth === infiniteScrollRef.current.scrollWidth)
+      : (infiniteScrollRef.current.offsetHeight === infiniteScrollRef.current.scrollHeight))
+  );
+  const previousButtonSize = (
+    previousButtonRef && (orientation === 'vertical'
+      ? getElementHeight(previousButtonRef)
+      : getElementWidth(previousButtonRef))
+  ) || 0;
+  const nextButtonSize = (
+    nextButtonRef && (orientation === 'vertical'
+      ? getElementHeight(nextButtonRef)
+      : getElementWidth(nextButtonRef))
+  ) || 0;
+  const infiniteScrollStyle = {};
+  if (_showScrollButtons && scrollButtonsPosition === 'outside') {
+    if (orientation === 'vertical') {
+      infiniteScrollStyle.height = `calc(100% - (${previousButtonSize}px + ${nextButtonSize}px))`;
+    } else {
+      infiniteScrollStyle.width = `calc(100% - (${previousButtonSize}px + ${nextButtonSize}px))`;
+    }
+  }
+  return (
+    <div className={classNames('infinite-scroll-container', orientation, { 'scroll-buttons-visible': showScrollButtons })}>
       {
-        items.length === 0 && !loading
-          ? <div className="no-data">{noData}</div>
-          : (
-            <>
-              {header && <div ref={(ref) => setHeaderRef(ref)} className="header">{header}</div>}
-              <Items
-                items={items}
-                footer={footer}
-                loadMore={(
-                  <LoadMoreItems
-                    onPageNoChange={onPageNoChange}
-                    pageNo={pageNo}
-                    pageSize={pageSize}
-                    total={total}
-                    noOfItems={(items && items.length) || 0}
-                    loading={loading}
-                    hasError={hasError}
-                    loader={loader}
-                    loadMoreContent={loadMoreContent}
-                    disableSensor={disableSensor}
-                    showBlocker={showBlocker}
-                    isPaginated={isPaginated}
-                  />
-                )}
-                pagination={isPaginated && (
-                  <Pagination
-                    activePage={pageNo}
-                    onChangeActivePage={onPageNoChange}
-                    pageSize={pageSize}
-                    totalRecords={total}
-                    pageNeighbours={2}
-                  />
-                )}
-                isVirtualized={isVirtualized}
-                orientation={orientation}
-                viewType={viewType}
-                floatingLoader={floatingLoader}
-                headerHeight={(headerRef && getElementHeight(headerRef)) || 0}
-              >
-                {children}
-              </Items>
-            </>
-          )
+        _showScrollButtons && (
+          <ScrollButton
+            setContainerRef={setPreviousButtonRef}
+            className="previous"
+            disabled={!isPreviousButtonEnabled}
+            onClick={handlePreviousButtonClick}
+            showOnHover={showScrollButtons === 'hover'}
+            orientation={orientation}
+            position={scrollButtonsPosition}
+          >
+            Previous
+          </ScrollButton>
+        )
       }
-    </BlockUI>
-  </div>
-);
+      <div
+        ref={infiniteScrollRef}
+        className={classNames('infinite-scroll', { 'scroll-buttons-visible': showScrollButtons })}
+        style={infiniteScrollStyle}
+        onScroll={handleScroll}
+      >
+        <BlockUI
+          tag="div"
+          className="full-height full-min-height"
+          blocking={
+            isPaginated ? loading : (showBlocker && (items && items.length === 0) && loading)
+          }
+          loader={blocker || <Loader />}
+          renderChildren={isPaginated && items.length > 0}
+        >
+          {
+            items.length === 0 && !loading
+              ? <div className="no-data">{noData}</div>
+              : (
+                <div className={classNames('infinite-scroll-content', orientation)} style={{}}>
+                  <Items
+                    items={items}
+                    header={header}
+                    footer={footer}
+                    loadMore={(
+                      <LoadMoreItems
+                        onPageNoChange={onPageNoChange}
+                        pageNo={pageNo}
+                        pageSize={pageSize}
+                        total={total}
+                        noOfItems={(items && items.length) || 0}
+                        loading={loading}
+                        hasError={hasError}
+                        loader={loader}
+                        loadMoreContent={loadMoreContent}
+                        disableSensor={disableSensor}
+                        showBlocker={showBlocker}
+                        isPaginated={isPaginated}
+                      />
+                    )}
+                    pagination={isPaginated && (
+                      <Pagination
+                        activePage={pageNo}
+                        onChangeActivePage={onPageNoChange}
+                        pageSize={pageSize}
+                        totalRecords={total}
+                        pageNeighbours={2}
+                      />
+                    )}
+                    isVirtualized={isVirtualized}
+                    orientation={orientation}
+                    viewType={viewType}
+                    floatingLoader={floatingLoader}
+                  >
+                    {children}
+                  </Items>
+                </div>
+              )
+          }
+        </BlockUI>
+      </div>
+      {
+        _showScrollButtons && (
+          <ScrollButton
+            setContainerRef={setNextButtonRef}
+            className="next"
+            disabled={!isNextButtonEnabled}
+            onClick={handleNextButtonClick}
+            showOnHover={showScrollButtons === 'hover'}
+            orientation={orientation}
+            position={scrollButtonsPosition}
+          >
+            Next
+          </ScrollButton>
+        )
+      }
+    </div>
+  );
+};
 
 InfiniteScroll.propTypes = {
   children: PropTypes.func.isRequired,
@@ -97,8 +168,18 @@ InfiniteScroll.propTypes = {
   orientation: PropTypes.oneOf(['horizontal', 'vertical']),
   viewType: PropTypes.oneOf(['list', 'grid']),
   floatingLoader: PropTypes.bool,
-  headerRef: PropTypes.instanceOf(Object),
-  setHeaderRef: PropTypes.func,
+  infiniteScrollRef: PropTypes.instanceOf(Object),
+  showScrollButtons: PropTypes.oneOf([true, false, 'hover']),
+  scrollButtonsPosition: PropTypes.oneOf(['inside', 'outside']),
+  previousButtonRef: PropTypes.instanceOf(Object),
+  setPreviousButtonRef: PropTypes.func,
+  isPreviousButtonEnabled: PropTypes.bool,
+  handlePreviousButtonClick: PropTypes.func,
+  nextButtonRef: PropTypes.instanceOf(Object),
+  setNextButtonRef: PropTypes.func,
+  isNextButtonEnabled: PropTypes.bool,
+  handleNextButtonClick: PropTypes.func,
+  handleScroll: PropTypes.func,
 };
 
 InfiniteScroll.defaultProps = {
@@ -122,8 +203,18 @@ InfiniteScroll.defaultProps = {
   orientation: 'vertical',
   viewType: 'list',
   floatingLoader: false,
-  headerRef: {},
-  setHeaderRef: noop,
+  infiniteScrollRef: {},
+  showScrollButtons: false,
+  scrollButtonsPosition: 'inside',
+  previousButtonRef: {},
+  setPreviousButtonRef: noop,
+  isPreviousButtonEnabled: false,
+  handlePreviousButtonClick: noop,
+  nextButtonRef: {},
+  setNextButtonRef: noop,
+  isNextButtonEnabled: false,
+  handleNextButtonClick: noop,
+  handleScroll: noop,
 };
 
 export default InfiniteScroll;

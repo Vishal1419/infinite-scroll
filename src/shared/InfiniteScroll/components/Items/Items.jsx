@@ -8,15 +8,16 @@ import NormalItems from './NormalItems';
 import { noop } from '../../../../utils';
 
 const Items = ({
-  items, loadMore, children, isVirtualized, footer, pagination, orientation, viewType,
-  floatingLoader, headerHeight,
+  items, loadMore, children, isVirtualized, header, footer, pagination, orientation, viewType,
+  floatingLoader,
 }) => (
-  <div className={classNames('infinite-scroll-items-container', orientation, viewType)} style={{ height: `calc(100% - ${headerHeight}px)` }}>
+  <div className={classNames('infinite-scroll-items-container', orientation, viewType)}>
     {
       isVirtualized
         ? (
           <VirtualizedItems
             items={items}
+            header={header}
             footer={footer}
             loadMore={loadMore}
             pagination={pagination}
@@ -29,6 +30,7 @@ const Items = ({
         : (
           <NormalItems
             items={items}
+            header={header}
             footer={footer}
             loadMore={loadMore}
             pagination={pagination}
@@ -48,11 +50,11 @@ Items.propTypes = {
   loadMore: PropTypes.node,
   children: PropTypes.func,
   isVirtualized: PropTypes.bool,
+  header: PropTypes.node,
   footer: PropTypes.node,
   pagination: PropTypes.node,
   orientation: PropTypes.oneOf(['horizontal', 'vertical']),
   viewType: PropTypes.oneOf(['list', 'grid']),
-  headerHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   floatingLoader: PropTypes.bool,
 };
 
@@ -61,11 +63,11 @@ Items.defaultProps = {
   loadMore: <div />,
   children: noop,
   isVirtualized: true,
+  header: null,
   footer: null,
   pagination: null,
   orientation: 'vertical',
   viewType: 'list',
-  headerHeight: 0,
   floatingLoader: false,
 };
 

@@ -14,7 +14,7 @@ class InfiniteScrollExampleContainer extends Component {
       total: 0,
       loading: false,
     };
-    this.items = new Array(100).fill().map((_, i) => i + 1);
+    this.items = new Array(100).fill().map((_, i) => i);
     this.getItems = this.getItems.bind(this);
     this.flushItems = this.flushItems.bind(this);
     this.setPageSize = this.setPageSize.bind(this);
