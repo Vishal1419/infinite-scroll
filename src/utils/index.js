@@ -32,24 +32,31 @@ const getTotalValue = (list, element) => list
   .map((prop) => parseInt(window.getComputedStyle(element)[prop], 10))
   .reduce((prev, cur) => prev + +cur, 0);
 
-export const getElementHeight = (element) => {
+export const getElementHeight = (element, ignoreProperties = []) => {
   const list = [
     'border-top-width', 'border-bottom-width',
     'margin-top', 'margin-bottom',
     'padding-top', 'padding-bottom',
     'height',
-  ];
+  ].filter((item) => !ignoreProperties.includes(item));
   return getTotalValue(list, element);
 };
 
-export const getElementWidth = (element) => {
+export const getElementWidth = (element, ignoreProperties = []) => {
   const list = [
     'border-left-width', 'border-right-width',
     'margin-left', 'margin-right',
     'padding-left', 'padding-right',
     'width',
-  ];
+  ].filter((item) => !ignoreProperties.includes(item));
   return getTotalValue(list, element);
+};
+
+export const getElementMainAxisSize = (element, ignoreProperties = [], orientation = 'horizontal') => {
+  if (orientation === 'horizontal') {
+    return getElementWidth(element, ignoreProperties);
+  }
+  return getElementHeight(element, ignoreProperties);
 };
 
 export const getElementDimensions = (element) => {

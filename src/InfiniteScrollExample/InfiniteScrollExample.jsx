@@ -9,7 +9,7 @@ const InfiniteScrollExample = ({
   getItems, flushItems, items,
   pageNo, pageSize, total, loading, setPageSize, isPaginated,
 }) => (
-  <>
+  <div style={{ width: '100%', height: '100%' }}>
     <InfiniteScroll
       getItems={getItems}
       flushItems={flushItems}
@@ -24,7 +24,7 @@ const InfiniteScrollExample = ({
       }}
       showBlocker
       loadMoreContent="Load More Data"
-      isVirtualized={false}
+      // isVirtualized={false}
       header={(
         <div>
           <button type="button" onClick={() => setPageSize(2)}>2</button>
@@ -34,13 +34,14 @@ const InfiniteScrollExample = ({
       )}
       footer={`total ${total}`}
       isPaginated={isPaginated}
-      orientation="horizontal"
+      // orientation="horizontal"
       // viewType="grid"
       // disableSensor
       // floatingLoader
       showScrollButtons="hover"
       scrollButtonsPosition="outside"
-      elementsToScrollAtATime={4}
+      itemsToScrollAtATime={4}
+      showPartiallyVisibleItem
     >
       {
         (item) => (
@@ -48,7 +49,7 @@ const InfiniteScrollExample = ({
         )
       }
     </InfiniteScroll>
-  </>
+  </div>
 );
 
 InfiniteScrollExample.propTypes = {

@@ -2,10 +2,11 @@ import React, { useRef, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-import { noop, getElementHeight } from '../../../../utils';
+import { noop, getElementHeight } from '../../../../../utils';
 
 const NormalItems = ({
   items, children, loadMore, header, footer, pagination, orientation, viewType, floatingLoader,
+  visibleItemsIndices, itemStyle, showPartiallyVisibleItem,
 }) => {
   const headerRef = useRef(null);
   const footerRef = useRef(null);
@@ -28,14 +29,30 @@ const NormalItems = ({
       >
         <div className={classNames('infinite-scroll-items', orientation, viewType)}>
           {
-            items.map((item, index) => (
-              <div
-                key={children(item).props['data-key'] || index}
-                className="infinite-scroll-item"
-              >
-                {children(item, index)}
-              </div>
-            ))
+            items.map((item, index) => {
+              const isItemInViewport = visibleItemsIndices.includes(index);
+              const _itemStyle = showPartiallyVisibleItem
+                ? {}
+                : {
+                  [orientation === 'horizontal' ? 'marginLeft' : 'marginTop']: (
+                    isItemInViewport && index !== visibleItemsIndices[0] && itemStyle.margin
+                  ) || 0,
+                  [orientation === 'horizontal' ? 'marginRight' : 'marginBottom']: (
+                    isItemInViewport
+                    && index !== visibleItemsIndices[visibleItemsIndices.length - 1]
+                    && itemStyle.margin
+                  ) || 0,
+                };
+              return (
+                <div
+                  key={children(item).props['data-key'] || index}
+                  className="infinite-scroll-item"
+                  style={_itemStyle}
+                >
+                  {children(item, index)}
+                </div>
+              );
+            })
           }
           {floatingLoader && viewType === 'grid' && loadMore}
         </div>
@@ -58,6 +75,9 @@ NormalItems.propTypes = {
   orientation: PropTypes.oneOf(['horizontal', 'vertical']),
   viewType: PropTypes.oneOf(['list', 'grid']),
   floatingLoader: PropTypes.bool,
+  visibleItemsIndices: PropTypes.instanceOf(Array),
+  itemStyle: PropTypes.instanceOf(Object),
+  showPartiallyVisibleItem: PropTypes.bool,
 };
 
 NormalItems.defaultProps = {
@@ -70,6 +90,9 @@ NormalItems.defaultProps = {
   orientation: 'vertical',
   viewType: 'list',
   floatingLoader: false,
+  visibleItemsIndices: [],
+  itemStyle: {},
+  showPartiallyVisibleItem: false,
 };
 
 export default NormalItems;

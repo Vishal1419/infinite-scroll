@@ -4,12 +4,12 @@ import classNames from 'classnames';
 
 import './items.scss';
 import VirtualizedItems from './VirtualizedItems';
-import NormalItems from './NormalItems';
+import NormalItems from './NormalItems/NormalItemsContainer';
 import { noop } from '../../../../utils';
 
 const Items = ({
   items, loadMore, children, isVirtualized, header, footer, pagination, orientation, viewType,
-  floatingLoader,
+  floatingLoader, infiniteScrollRef, currentIndex, loading, showPartiallyVisibleItem,
 }) => (
   <div className={classNames('infinite-scroll-items-container', orientation, viewType)}>
     {
@@ -37,6 +37,10 @@ const Items = ({
             orientation={orientation}
             viewType={viewType}
             floatingLoader={floatingLoader}
+            infiniteScrollRef={infiniteScrollRef}
+            currentIndex={currentIndex}
+            loading={loading}
+            showPartiallyVisibleItem={showPartiallyVisibleItem}
           >
             {children}
           </NormalItems>
@@ -56,6 +60,10 @@ Items.propTypes = {
   orientation: PropTypes.oneOf(['horizontal', 'vertical']),
   viewType: PropTypes.oneOf(['list', 'grid']),
   floatingLoader: PropTypes.bool,
+  infiniteScrollRef: PropTypes.instanceOf(Object),
+  currentIndex: PropTypes.number,
+  loading: PropTypes.bool,
+  showPartiallyVisibleItem: PropTypes.bool,
 };
 
 Items.defaultProps = {
@@ -69,6 +77,10 @@ Items.defaultProps = {
   orientation: 'vertical',
   viewType: 'list',
   floatingLoader: false,
+  infiniteScrollRef: {},
+  currentIndex: 0,
+  loading: false,
+  showPartiallyVisibleItem: false,
 };
 
 export default Items;

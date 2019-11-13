@@ -22,7 +22,7 @@ const InfiniteScroll = ({
   showScrollButtons, scrollButtonsPosition,
   previousButtonRef, setPreviousButtonRef, isPreviousButtonEnabled, handlePreviousButtonClick,
   nextButtonRef, setNextButtonRef, isNextButtonEnabled, handleNextButtonClick,
-  handleScroll,
+  handleScroll, currentIndex, showPartiallyVisibleItem,
 }) => {
   const _showScrollButtons = showScrollButtons
   && !(
@@ -49,6 +49,7 @@ const InfiniteScroll = ({
       infiniteScrollStyle.width = `calc(100% - (${previousButtonSize}px + ${nextButtonSize}px))`;
     }
   }
+
   return (
     <div className={classNames('infinite-scroll-container', orientation, { 'scroll-buttons-visible': showScrollButtons })}>
       {
@@ -119,6 +120,10 @@ const InfiniteScroll = ({
                     orientation={orientation}
                     viewType={viewType}
                     floatingLoader={floatingLoader}
+                    infiniteScrollRef={infiniteScrollRef}
+                    currentIndex={currentIndex}
+                    loading={loading}
+                    showPartiallyVisibleItem={showPartiallyVisibleItem}
                   >
                     {children}
                   </Items>
@@ -180,6 +185,8 @@ InfiniteScroll.propTypes = {
   isNextButtonEnabled: PropTypes.bool,
   handleNextButtonClick: PropTypes.func,
   handleScroll: PropTypes.func,
+  currentIndex: PropTypes.number,
+  showPartiallyVisibleItem: PropTypes.bool,
 };
 
 InfiniteScroll.defaultProps = {
@@ -215,6 +222,8 @@ InfiniteScroll.defaultProps = {
   isNextButtonEnabled: false,
   handleNextButtonClick: noop,
   handleScroll: noop,
+  currentIndex: 0,
+  showPartiallyVisibleItem: false,
 };
 
 export default InfiniteScroll;

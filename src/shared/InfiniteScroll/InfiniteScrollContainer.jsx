@@ -7,7 +7,7 @@ import './infinite-scroll.scss';
 import InfiniteScroll from './InfiniteScroll';
 import {
   noop, debounce, scrollToIndex, getElementDimensions, isInViewport,
-  getElementWidth, getElementHeight,
+  getElementWidth, getElementHeight, throttle,
 } from '../../utils';
 import { usePrevious } from '../../utils/hooks';
 
@@ -20,7 +20,7 @@ const InfiniteScrollContainer = ({
   blocker, loader, showBlocker, loadMoreContent,
   isVirtualized, header, footer, disableSensor,
   isPaginated, orientation, viewType, floatingLoader,
-  showScrollButtons, scrollButtonsPosition, elementsToScrollAtATime,
+  showScrollButtons, scrollButtonsPosition, itemsToScrollAtATime, showPartiallyVisibleItem,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
@@ -61,47 +61,85 @@ const InfiniteScrollContainer = ({
     }
   };
 
+  const toggleScrollButtonEnabledState = (scrollStart) => {
+    let _scrollStart = scrollStart;
+    const infiniteScroll = infiniteScrollRef && infiniteScrollRef.current;
+    if (isNaN(_scrollStart)) { // eslint-disable-line
+      _scrollStart = orientation === 'horizontal' ? infiniteScroll.scrollLeft : infiniteScroll.scrollTop;
+    }
+    if (_scrollStart === 0) setIsPreviousButtonEnabled(false);
+    else setIsPreviousButtonEnabled(true);
+    if (
+      orientation === 'horizontal'
+        ? infiniteScroll.scrollWidth - _scrollStart <= getElementWidth(infiniteScroll)
+        : infiniteScroll.scrollHeight - _scrollStart <= getElementHeight(infiniteScroll)
+    ) {
+      setIsNextButtonEnabled(false);
+    } else setIsNextButtonEnabled(true);
+  };
+
   useEffect(() => {
-    if (!isVirtualized && viewType === 'list' && showScrollButtons && elementsToScrollAtATime) { // limitation
-      const infiniteScrollItems = document.getElementsByClassName('infinite-scroll-item');
-      const infiniteScroll = infiniteScrollRef && infiniteScrollRef.current;
-      const scrollStart = scrollToIndex(
-        infiniteScroll, infiniteScrollItems, currentIndex, orientation,
-      );
-      if (scrollStart === 0) setIsPreviousButtonEnabled(false);
-      else setIsPreviousButtonEnabled(true);
-      if (
-        orientation === 'horizontal'
-          ? infiniteScroll.scrollWidth - scrollStart <= getElementWidth(infiniteScroll)
-          : infiniteScroll.scrollHeight - scrollStart <= getElementHeight(infiniteScroll)
-      ) {
-        setIsNextButtonEnabled(false);
-      } else setIsNextButtonEnabled(true);
+    if (!isVirtualized && viewType === 'list' && showScrollButtons) { // limitation
+      let scrollStart;
+      if (itemsToScrollAtATime) {
+        const infiniteScrollItems = document.getElementsByClassName('infinite-scroll-item');
+        const infiniteScroll = infiniteScrollRef && infiniteScrollRef.current;
+        scrollStart = scrollToIndex(
+          infiniteScroll, infiniteScrollItems, currentIndex, orientation,
+        );
+      }
+      toggleScrollButtonEnabledState(scrollStart);
     }
   }, [currentIndex, items]);
 
   const handlePreviousButtonClick = () => {
-    setCurrentIndex((prevIndex) => prevIndex - elementsToScrollAtATime);
+    if (itemsToScrollAtATime) {
+      throttle(() => {
+        setCurrentIndex((prevIndex) => prevIndex - itemsToScrollAtATime);
+      }, 500);
+    } else {
+      const infiniteScroll = infiniteScrollRef && infiniteScrollRef.current;
+      if (orientation === 'horizontal') {
+        infiniteScroll.scrollLeft -= (getElementWidth(infiniteScroll) / 2);
+      } else {
+        infiniteScroll.scrollTop -= (getElementHeight(infiniteScroll) / 2);
+      }
+    }
   };
 
   const handleNextButtonClick = () => {
-    setCurrentIndex((prevIndex) => prevIndex + elementsToScrollAtATime);
+    if (itemsToScrollAtATime) {
+      throttle(() => {
+        setCurrentIndex((prevIndex) => prevIndex + itemsToScrollAtATime);
+      }, 500);
+    } else {
+      const infiniteScroll = infiniteScrollRef && infiniteScrollRef.current;
+      if (orientation === 'horizontal') {
+        infiniteScroll.scrollLeft += (getElementWidth(infiniteScroll) / 2);
+      } else {
+        infiniteScroll.scrollTop += (getElementHeight(infiniteScroll) / 2);
+      }
+    }
   };
 
   const handleScroll = () => {
-    if (!isVirtualized && viewType === 'list' && showScrollButtons && elementsToScrollAtATime) { // limitation
+    if (!isVirtualized && viewType === 'list' && showScrollButtons) { // limitation
       debounce(() => {
-        const infiniteScrollItems = document.getElementsByClassName('infinite-scroll-item');
-        const infiniteScroll = infiniteScrollRef && infiniteScrollRef.current;
-        const viewportDimensions = getElementDimensions(infiniteScroll, orientation);
-        [...infiniteScrollItems].every((item, index, self) => {
-          if (isInViewport(viewportDimensions, item, orientation, 0.5)) {
-            setCurrentIndex(index);
-            scrollToIndex(infiniteScroll, self, index, orientation);
-            return false;
-          }
-          return true;
-        });
+        if (itemsToScrollAtATime) {
+          const infiniteScrollItems = document.getElementsByClassName('infinite-scroll-item');
+          const infiniteScroll = infiniteScrollRef && infiniteScrollRef.current;
+          const viewportDimensions = getElementDimensions(infiniteScroll, orientation);
+          [...infiniteScrollItems].every((item, index, self) => {
+            if (isInViewport(viewportDimensions, item, orientation, 0.5)) {
+              setCurrentIndex(index);
+              scrollToIndex(infiniteScroll, self, index, orientation);
+              return false;
+            }
+            return true;
+          });
+        } else {
+          toggleScrollButtonEnabledState();
+        }
       }, 200);
     }
   };
@@ -146,6 +184,8 @@ const InfiniteScrollContainer = ({
       isNextButtonEnabled={isNextButtonEnabled}
       handleNextButtonClick={handleNextButtonClick}
       handleScroll={handleScroll}
+      currentIndex={currentIndex}
+      showPartiallyVisibleItem={orientation === 'horizontal' && viewType === 'list' && itemsToScrollAtATime > 0 ? showPartiallyVisibleItem : true} // limitation
     >
       {children}
     </InfiniteScroll>
@@ -180,7 +220,8 @@ InfiniteScrollContainer.propTypes = {
   floatingLoader: PropTypes.bool,
   showScrollButtons: PropTypes.oneOf([true, false, 'hover']),
   scrollButtonsPosition: PropTypes.oneOf(['inside', 'outside']),
-  elementsToScrollAtATime: PropTypes.number,
+  itemsToScrollAtATime: PropTypes.number,
+  showPartiallyVisibleItem: PropTypes.bool,
 };
 
 InfiniteScrollContainer.defaultProps = {
@@ -210,7 +251,8 @@ InfiniteScrollContainer.defaultProps = {
   floatingLoader: false,
   showScrollButtons: false,
   scrollButtonsPosition: 'inside',
-  elementsToScrollAtATime: 0,
+  itemsToScrollAtATime: 0,
+  showPartiallyVisibleItem: false,
 };
 
 export default InfiniteScrollContainer;
