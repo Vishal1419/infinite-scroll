@@ -20,7 +20,8 @@ const InfiniteScrollContainer = ({
   blocker, loader, showBlocker, loadMoreContent,
   isVirtualized, header, footer, disableSensor,
   isPaginated, orientation, viewType, floatingLoader,
-  showScrollButtons, scrollButtonsPosition, itemsToScrollAtATime, showPartiallyVisibleItem,
+  showScrollButtons, scrollButtonsPosition,
+  itemsToScrollAtATime, showPartiallyVisibleItem, hideScrollbar,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
@@ -186,6 +187,7 @@ const InfiniteScrollContainer = ({
       handleScroll={handleScroll}
       currentIndex={currentIndex}
       showPartiallyVisibleItem={orientation === 'horizontal' && viewType === 'list' && itemsToScrollAtATime > 0 ? showPartiallyVisibleItem : true} // limitation
+      hideScrollbar={hideScrollbar}
     >
       {children}
     </InfiniteScroll>
@@ -222,6 +224,7 @@ InfiniteScrollContainer.propTypes = {
   scrollButtonsPosition: PropTypes.oneOf(['inside', 'outside']),
   itemsToScrollAtATime: PropTypes.number,
   showPartiallyVisibleItem: PropTypes.bool,
+  hideScrollbar: PropTypes.bool,
 };
 
 InfiniteScrollContainer.defaultProps = {
@@ -253,6 +256,7 @@ InfiniteScrollContainer.defaultProps = {
   scrollButtonsPosition: 'inside',
   itemsToScrollAtATime: 0,
   showPartiallyVisibleItem: false,
+  hideScrollbar: false,
 };
 
 export default InfiniteScrollContainer;

@@ -22,7 +22,7 @@ const InfiniteScroll = ({
   showScrollButtons, scrollButtonsPosition,
   previousButtonRef, setPreviousButtonRef, isPreviousButtonEnabled, handlePreviousButtonClick,
   nextButtonRef, setNextButtonRef, isNextButtonEnabled, handleNextButtonClick,
-  handleScroll, currentIndex, showPartiallyVisibleItem,
+  handleScroll, currentIndex, showPartiallyVisibleItem, hideScrollbar,
 }) => {
   const _showScrollButtons = showScrollButtons
   && !(
@@ -42,6 +42,9 @@ const InfiniteScroll = ({
       : getElementWidth(nextButtonRef))
   ) || 0;
   const infiniteScrollStyle = {};
+  if (_showScrollButtons) {
+    infiniteScrollStyle.overflow = hideScrollbar ? 'hidden' : 'auto';
+  }
   if (_showScrollButtons && scrollButtonsPosition === 'outside') {
     if (orientation === 'vertical') {
       infiniteScrollStyle.height = `calc(100% - (${previousButtonSize}px + ${nextButtonSize}px))`;
@@ -187,6 +190,7 @@ InfiniteScroll.propTypes = {
   handleScroll: PropTypes.func,
   currentIndex: PropTypes.number,
   showPartiallyVisibleItem: PropTypes.bool,
+  hideScrollbar: PropTypes.bool,
 };
 
 InfiniteScroll.defaultProps = {
@@ -224,6 +228,7 @@ InfiniteScroll.defaultProps = {
   handleScroll: noop,
   currentIndex: 0,
   showPartiallyVisibleItem: false,
+  hideScrollbar: false,
 };
 
 export default InfiniteScroll;
