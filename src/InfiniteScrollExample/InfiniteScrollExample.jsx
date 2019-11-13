@@ -22,8 +22,12 @@ const InfiniteScrollExample = ({
       didMount={() => {
         console.log('inside settimeout');
       }}
-      showBlocker
-      loadMoreContent="Load More Data"
+      loaderProps={{
+        showBlocker: true,
+        loadMoreContent: 'Load More Data',
+        // disableSensor: true,
+        // floatingLoader: true,
+      }}
       isVirtualized={false}
       header={(
         <div>
@@ -36,13 +40,13 @@ const InfiniteScrollExample = ({
       isPaginated={isPaginated}
       orientation="horizontal"
       // viewType="grid"
-      // disableSensor
-      // floatingLoader
-      showScrollButtons="hover"
-      scrollButtonsPosition="outside"
-      itemsToScrollAtATime={4}
-      showPartiallyVisibleItem
-      hideScrollbar
+      scrollProps={{
+        showScrollButtons: 'hover',
+        scrollButtonsPosition: 'outside',
+        itemsToScrollAtATime: 4,
+        // showPartiallyVisibleItem: true,
+        hideScrollbar: false,
+      }}
     >
       {
         (item) => (
