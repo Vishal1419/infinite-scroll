@@ -1,18 +1,18 @@
-.infinite-scroll-items-container {
+.IS-content {
   height: 100%;
-  .infinite-scroll-items-wrapper {
-    &.horizontal {
+  .IS-items-container {
+    &.IS-INTERNAL-horizontal {
       display: flex;
     }
 
-    .infinite-scroll-items {
+    .IS-items {
       display: flex;
 
-      &.horizontal {
-        &.list {
+      &.IS-INTERNAL-horizontal {
+        &.IS-INTERNAL-list {
           flex-direction: row;
         }
-        &.grid {
+        &.IS-INTERNAL-grid {
           flex-direction: column;
           flex-wrap: wrap;
           align-content: flex-start;
@@ -20,18 +20,18 @@
         }
       }
 
-      &.vertical {
-        &.list {
+      &.IS-INTERNAL-vertical {
+        &.IS-INTERNAL-list {
           flex-direction: column;
         }
-        &.grid {
+        &.IS-INTERNAL-grid {
           flex-direction: row;
           flex-wrap: wrap;
           align-content: flex-start;
         }
       }
       
-      .infinite-scroll-item {
+      .IS-item-container {
         display: flex;
         > * {
           flex: 1;

@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 import './pagination.scss';
 import Pagination from './Pagination';
@@ -27,7 +28,7 @@ const getPageRange = (activePage, pageNeighbours, totalPages) => {
 };
 
 const PaginationContainer = ({
-  activePage, onChangeActivePage, pageSize, totalRecords, pageNeighbours,
+  classes, styles, activePage, onChangeActivePage, pageSize, totalRecords, pageNeighbours,
 }) => {
   const totalPages = Math.ceil(totalRecords / pageSize);
   const pageRange = getPageRange(activePage, pageNeighbours, totalPages);
@@ -35,19 +36,31 @@ const PaginationContainer = ({
   const pages = [
     {
       label: 'Previous',
-      className: '',
+      className: classNames('IS-pagination-previous-button', classes.paginationPreviousButton),
+      style: styles.paginationPreviousButton,
       disabled: activePage === 1,
       onClick: () => onChangeActivePage(activePage - 1),
     },
     ...pageRange.map((page) => ({
       label: page,
-      className: `pagination-button ${page === activePage ? 'active' : ''}`,
+      className: classNames({
+        'IS-pagination-active-button': page === activePage,
+        [classes.paginationActiveButton]: page === activePage,
+        'IS-pagination-button': page !== '...',
+        [classes.paginationButton]: page !== '...',
+        'IS-more-pages-label': page === '...',
+        [classes.morePagesLabel]: page === '...',
+      }),
+      style: page === '...'
+        ? styles.morePagesLabel
+        : { ...styles.paginationButton, ...((page === activePage && styles.paginationActiveButton) || {}) },
       disabled: page === '...',
       onClick: () => (page !== activePage && onChangeActivePage(page)) || noop,
     })),
     {
       label: 'Next',
-      className: '',
+      className: classNames('IS-pagination-next-button', classes.paginationNextButton),
+      style: styles.paginationNextButton,
       disabled: activePage === totalPages,
       onClick: () => onChangeActivePage(activePage + 1),
     },
@@ -55,6 +68,8 @@ const PaginationContainer = ({
 
   return (
     <Pagination
+      containerClassName={classes.paginationContainer}
+      containerStyle={styles.paginationContainer}
       totalPages={totalPages}
       pages={pages}
     />
@@ -62,6 +77,8 @@ const PaginationContainer = ({
 };
 
 PaginationContainer.propTypes = {
+  classes: PropTypes.instanceOf(Object),
+  styles: PropTypes.instanceOf(Object),
   activePage: PropTypes.number,
   onChangeActivePage: PropTypes.func,
   pageSize: PropTypes.number,
@@ -70,6 +87,8 @@ PaginationContainer.propTypes = {
 };
 
 PaginationContainer.defaultProps = {
+  classes: {},
+  styles: {},
   activePage: 1,
   onChangeActivePage: noop,
   pageSize: 10,

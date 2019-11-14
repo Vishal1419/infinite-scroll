@@ -47,10 +47,17 @@ const InfiniteScrollExample = ({
         // showPartiallyVisibleItem: true,
         hideScrollbar: false,
       }}
+      classes={{ test: 'test' }}
     >
       {
         (item) => (
-          <div data-key={item} className="abc" style={{ padding: '20px 100px', border: '1px solid #ddd', margin: 0 }}>{item}</div>
+          <div
+            data-key={item}
+            className="abc"
+            style={{ padding: '20px 100px', border: '1px solid #ddd', margin: 0 }}
+          >
+            {item}
+          </div>
         )
       }
     </InfiniteScroll>

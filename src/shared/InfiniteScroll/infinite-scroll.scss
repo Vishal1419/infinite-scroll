@@ -2,51 +2,49 @@ body {
   margin: 0;
 }
 
-.infinite-scroll-container {
+.IS-container {
   height: 100%;
   position: relative;
   &:hover {
-    .scroll-button-container {
-      &.show-on-hover {
+    .IS-scroll-button-container {
+      &.IS-INTERNAL-show-on-hover {
         opacity: 1;
       }
     }
   }
-  &.horizontal {
-    &.scroll-buttons-visible {
+  &.IS-INTERNAL-horizontal {
+    &.IS-INTERNAL-scroll-buttons-visible {
       display: flex;
     }
   }
-  .infinite-scroll {
+  .IS-main {
     height: 100%;
     scroll-behavior: smooth;
-    &.scroll-buttons-visible {
+    &.IS-INTERNAL-scroll-buttons-visible {
       overflow: auto;
       width: 100%;
     }
-    .header, .footer {
+    .IS-header-container, .IS-footer-container {
       padding: 10px 0;
     }
-    .infinite-scroll-content {
-      &.horizontal {
+    .IS-content-container {
+      &.IS-INTERNAL-horizontal {
         height: 100%;
       }
     }
     .block-ui-container {
       height: 100%;
     }
-    .loader-container {
+    .IS-default-loader-container {
       display: flex;
       justify-content: center;
       align-items: center;
     }
-    .full-height {
+    .IS-blocker-container {
       height: 100%;
-    }
-    .full-min-height {
       min-height: 100%;
     }
-    .no-data {
+    .IS-no-data-container {
       width: 100%;
       text-align: center;
       padding: 64px 0;

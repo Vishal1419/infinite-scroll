@@ -1,53 +1,53 @@
-.scroll-button-container {
-  &.show-on-hover {
+.IS-scroll-button-container {
+  &.IS-INTERNAL-show-on-hover {
     opacity: 0.1;
     transition: opacity 0.2s ease-in;
   }
-  &.outside {
+  &.IS-INTERNAL-outside {
     display: flex;
     justify-content: center;
     align-items: center;
-    &.vertical {
+    &.IS-INTERNAL-vertical {
       width: 100%;
       padding: 8px 0;
-      &.previous {
+      &.IS-previous-button-container {
         top: 0;
       }
-      &.next {
+      &.IS-next-button-container {
         bottom: 0;
       }
     }
-    &.horizontal {
+    &.IS-INTERNAL-horizontal {
       height: calc(100% - 15px);
       padding: 0 8px;
-      &.previous {
+      &.IS-previous-button-container {
         left: 0;
       }
-      &.next {
+      &.IS-next-button-container {
         right: 0;
       }
     }
   }
-  &.inside {
+  &.IS-INTERNAL-inside {
     position: absolute;
     z-index: 1000;
-    &.vertical {
+    &.IS-INTERNAL-vertical {
       left: 50%;
       transform: translateX(-50%);
-      &.previous {
+      &.IS-previous-button-container {
         top: 8px;
       }
-      &.next {
+      &.IS-next-button-container {
         bottom: 8px;
       }
     }
-    &.horizontal {
+    &.IS-INTERNAL-horizontal {
       top: 50%;
       transform: translateY(-50%);
-      &.previous {
+      &.IS-previous-button-container {
         left: 8px;
       }
-      &.next {
+      &.IS-next-button-container {
         right: 8px;
       }
     }

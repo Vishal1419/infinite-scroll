@@ -1,4 +1,4 @@
-.pagination {
+.IS-pagination-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -7,7 +7,7 @@
     &:focus {
       outline: none;
     }
-    &.active {
+    &.IS-pagination-active-button {
       background-color: #305cad;
       color: #fff;
     }

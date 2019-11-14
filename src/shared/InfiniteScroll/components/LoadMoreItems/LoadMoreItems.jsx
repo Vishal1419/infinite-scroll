@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 import './load-more-items.scss';
 import InfiniteSensor from './InfiniteSensor';
@@ -7,6 +8,7 @@ import Loader from '../Loader/Loader';
 import { noop } from '../../../../utils';
 
 const LoadMoreItems = ({
+  classes, styles,
   onPageNoChange, pageNo, pageSize, total,
   noOfItems, loading, hasError, loader, loadMoreContent,
   disableSensor, showBlocker, isPaginated,
@@ -24,8 +26,21 @@ const LoadMoreItems = ({
           : checkLoaderVisibility() && loading)
         )
         && (
-          <div className="infinite-loader">
-            { loader || <Loader size={20} /> }
+          <div
+            className={classNames('IS-loader-container', classes.loaderContainer)}
+            style={styles.loaderContainer}
+          >
+            {
+              loader || (
+                <Loader
+                  containerClassName={classes.defaultLoaderContainer}
+                  containerStyle={styles.defaultLoaderContainer}
+                  className={classes.defaultLoader}
+                  style={styles.defaultLoader}
+                  size={20}
+                />
+              )
+            }
           </div>
         )
       }
@@ -35,7 +50,8 @@ const LoadMoreItems = ({
         && (
           <InfiniteSensor
             active={!disableSensor}
-            className="infinite-sensor"
+            className={classNames('IS-sensor-container', classes.sensorContainer)}
+            style={styles.sensorContainer}
             onReachedBottom={() => onPageNoChange(pageNo + 1)}
           />
         )
@@ -43,10 +59,14 @@ const LoadMoreItems = ({
       {
         !hasError && !isPaginated && checkLoaderVisibility() && !loading
         && (
-          <div className="load-more-wrapper">
+          <div
+            className={classNames('IS-load-more-button-container', classes.loadMoreButtonContainer)}
+            style={styles.loadMoreButtonContainer}
+          >
             <button
               type="button"
-              className="load-more"
+              className={classNames('IS-load-more-button', classes.loadMoreButton)}
+              style={styles.loadMoreButton}
               onClick={() => onPageNoChange(pageNo + 1)}
             >
               {loadMoreContent}
@@ -59,6 +79,8 @@ const LoadMoreItems = ({
 };
 
 LoadMoreItems.propTypes = {
+  classes: PropTypes.instanceOf(Object),
+  styles: PropTypes.instanceOf(Object),
   onPageNoChange: PropTypes.func,
   pageNo: PropTypes.number,
   pageSize: PropTypes.number,
@@ -74,6 +96,8 @@ LoadMoreItems.propTypes = {
 };
 
 LoadMoreItems.defaultProps = {
+  classes: {},
+  styles: {},
   onPageNoChange: noop,
   pageNo: 1,
   pageSize: 10,

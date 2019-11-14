@@ -12,7 +12,7 @@ import { usePrevious } from '../../../../utils/hooks';
 let cache;
 
 const VirtualizedItems = ({
-  items, loadMore, children, header, footer, pagination, orientation, viewType,
+  classes, styles, items, loadMore, children, header, footer, pagination, orientation, viewType,
 }) => {
   const previousItemsLength = usePrevious(items.length) || 0;
   const [scrollOffset, setScrollOffset] = useState(0);
@@ -56,8 +56,23 @@ const VirtualizedItems = ({
             <AutoSizer disableHeight>
               {
                 ({ width }) => (
-                  <div className={classNames('infinite-scroll-items', orientation, viewType)} style={{ width }}>
-                    {header && <div className="header">{header}</div>}
+                  <div
+                    className={classNames(
+                      'IS-items', classes.items,
+                      `IS-INTERNAL-${orientation}`, `IS-INTERNAL-${viewType}`,
+                    )}
+                    style={{ ...(styles.items), width }}
+                  >
+                    {
+                      header && (
+                        <div
+                          className={classNames('IS-header-container', classes.headerContainer)}
+                          style={styles.headerContainer}
+                        >
+                          {header}
+                        </div>
+                      )
+                    }
                     <List
                       ref={registerChild}
                       width={width}
@@ -80,15 +95,24 @@ const VirtualizedItems = ({
                           rowIndex={index}
                         >
                           <div
-                            className="infinite-scroll-item"
-                            style={style}
+                            className={classNames('IS-item-container', classes.itemContainer)}
+                            style={{ ...(styles.itemContainer), ...style }}
                           >
                             {children(items[index], index)}
                           </div>
                         </CellMeasurer>
                       )}
                     />
-                    {footer && <div className="footer">{footer}</div>}
+                    {
+                      footer && (
+                        <div
+                          className={classNames('IS-footer-container', classes.footerContainer)}
+                          style={styles.footerContainer}
+                        >
+                          {footer}
+                        </div>
+                      )
+                    }
                     {pagination}
                     {loadMore}
                   </div>
@@ -103,6 +127,8 @@ const VirtualizedItems = ({
 };
 
 VirtualizedItems.propTypes = {
+  classes: PropTypes.instanceOf(Object),
+  styles: PropTypes.instanceOf(Object),
   items: PropTypes.instanceOf(Array),
   loadMore: PropTypes.node,
   children: PropTypes.func,
@@ -114,6 +140,8 @@ VirtualizedItems.propTypes = {
 };
 
 VirtualizedItems.defaultProps = {
+  classes: {},
+  styles: {},
   items: [],
   loadMore: <div />,
   children: noop,

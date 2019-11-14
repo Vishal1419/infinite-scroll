@@ -11,6 +11,7 @@
       "specialLink": [ "to" ]
     }],
     "no-underscore-dangle": 0,
-    "react/sort-comp": 0
+    "react/sort-comp": 0,
+    "max-len": ["error", { "code": 120 }]
   }
 }

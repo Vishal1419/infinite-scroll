@@ -6,10 +6,14 @@ import ScrollButton from './ScrollButton';
 import { noop } from '../../../../utils';
 
 const ScrollButtonContainer = ({
-  className, disabled, onClick, showOnHover, orientation, position, setContainerRef, children,
+  containerClassName, containerStyle, className, style, disabled, onClick, showOnHover,
+  orientation, position, setContainerRef, children,
 }) => (
   <ScrollButton
+    containerClassName={containerClassName}
+    containerStyle={containerStyle}
     className={className}
+    style={style}
     disabled={disabled}
     onClick={onClick}
     showOnHover={showOnHover}
@@ -22,7 +26,10 @@ const ScrollButtonContainer = ({
 );
 
 ScrollButtonContainer.propTypes = {
+  containerClassName: PropTypes.string,
+  containerStyle: PropTypes.instanceOf(Object),
   className: PropTypes.string,
+  style: PropTypes.instanceOf(Object),
   disabled: PropTypes.bool,
   onClick: PropTypes.func,
   showOnHover: PropTypes.bool,
@@ -33,7 +40,10 @@ ScrollButtonContainer.propTypes = {
 };
 
 ScrollButtonContainer.defaultProps = {
+  containerClassName: '',
+  containerStyle: {},
   className: '',
+  style: {},
   disabled: false,
   onClick: noop,
   showOnHover: false,

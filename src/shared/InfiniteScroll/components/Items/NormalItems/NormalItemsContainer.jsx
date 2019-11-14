@@ -11,7 +11,9 @@ const getFullyVisibleItemMargin = (
 ) => {
   const visibleItemsIndices = [];
   const viewportMainAxisSize = orientation === 'horizontal' ? viewportDimensions.width : viewportDimensions.height;
-  const mainAxisMarginProps = orientation === 'horizontal' ? ['margin-left', 'margin-right'] : ['margin-top', 'margin-bottom'];
+  const mainAxisMarginProps = orientation === 'horizontal'
+    ? ['margin-left', 'margin-right']
+    : ['margin-top', 'margin-bottom'];
   const visibleItemsMainAxisSize = infiniteScrollItems
     .reduce((acc, item, index) => {
       const nextMainAxisSize = (
@@ -39,18 +41,19 @@ const getFullyVisibleItemMargin = (
 };
 
 const NormalItemsContainer = ({
-  items, children, loadMore, header, footer, pagination, orientation, viewType, floatingLoader,
-  infiniteScrollRef, currentIndex, loading, showPartiallyVisibleItem,
+  classes, styles, items, children, loadMore, header, footer, pagination,
+  orientation, viewType, floatingLoader, infiniteScrollRef, currentIndex, loading,
+  showPartiallyVisibleItem, itemsMarginChanged,
 }) => {
   const [infiniteScrollItems, setInfiniteScrollItems] = useState([]);
 
   useEffect(() => {
-    const _infiniteScrollItems = document.getElementsByClassName('infinite-scroll-item');
+    const _infiniteScrollItems = document.getElementsByClassName('IS-item-container');
     setInfiniteScrollItems([..._infiniteScrollItems]);
   }, []);
 
   useEffect(() => {
-    const _infiniteScrollItems = document.getElementsByClassName('infinite-scroll-item');
+    const _infiniteScrollItems = document.getElementsByClassName('IS-item-container');
     setInfiniteScrollItems([..._infiniteScrollItems]);
   }, [items]);
 
@@ -61,9 +64,12 @@ const NormalItemsContainer = ({
       infiniteScrollItems, currentIndex, viewportDimensions, orientation, loading,
     )
     : {};
+  itemsMarginChanged(fullyVisibleItemMargin * (visibleItemsIndices.length - 1));
 
   return (
     <NormalItems
+      classes={classes}
+      styles={styles}
       items={items}
       header={header}
       footer={footer}
@@ -82,6 +88,8 @@ const NormalItemsContainer = ({
 };
 
 NormalItemsContainer.propTypes = {
+  classes: PropTypes.instanceOf(Object),
+  styles: PropTypes.instanceOf(Object),
   items: PropTypes.instanceOf(Array),
   children: PropTypes.func,
   loadMore: PropTypes.node,
@@ -95,9 +103,12 @@ NormalItemsContainer.propTypes = {
   currentIndex: PropTypes.number,
   loading: PropTypes.bool,
   showPartiallyVisibleItem: PropTypes.bool,
+  itemsMarginChanged: PropTypes.func,
 };
 
 NormalItemsContainer.defaultProps = {
+  classes: {},
+  styles: {},
   items: [],
   children: noop,
   loadMore: <div />,
@@ -111,6 +122,7 @@ NormalItemsContainer.defaultProps = {
   currentIndex: 0,
   loading: false,
   showPartiallyVisibleItem: false,
+  itemsMarginChanged: noop,
 };
 
 export default NormalItemsContainer;

@@ -12,7 +12,7 @@ import {
 import { usePrevious } from '../../utils/hooks';
 
 const InfiniteScrollContainer = ({
-  children, noData,
+  children, classes, styles, noData,
   getItems, getItemsSource, flushItems, items,
   pageNo, pageSize, total,
   loading, hasError, didMount,
@@ -36,6 +36,8 @@ const InfiniteScrollContainer = ({
 
   const previousPageSize = usePrevious(pageSize) || pageSize;
   const infiniteScrollRef = useRef(null);
+
+  let itemsMargin = 0;
 
   useEffect(() => {
     (async () => {
@@ -74,10 +76,11 @@ const InfiniteScrollContainer = ({
     }
     if (_scrollStart === 0) setIsPreviousButtonEnabled(false);
     else setIsPreviousButtonEnabled(true);
+    const _itemsMargin = _scrollStart === 0 ? 0 : itemsMargin;
     if (
       orientation === 'horizontal'
-        ? infiniteScroll.scrollWidth - _scrollStart <= getElementWidth(infiniteScroll)
-        : infiniteScroll.scrollHeight - _scrollStart <= getElementHeight(infiniteScroll)
+        ? infiniteScroll.scrollWidth - _scrollStart - _itemsMargin <= getElementWidth(infiniteScroll)
+        : infiniteScroll.scrollHeight - _scrollStart - _itemsMargin <= getElementHeight(infiniteScroll)
     ) {
       setIsNextButtonEnabled(false);
     } else setIsNextButtonEnabled(true);
@@ -87,7 +90,7 @@ const InfiniteScrollContainer = ({
     if (!isVirtualized && viewType === 'list' && showScrollButtons) { // limitation
       let scrollStart;
       if (itemsToScrollAtATime) {
-        const infiniteScrollItems = document.getElementsByClassName('infinite-scroll-item');
+        const infiniteScrollItems = document.getElementsByClassName('IS-item-container');
         const infiniteScroll = infiniteScrollRef && infiniteScrollRef.current;
         scrollStart = scrollToIndex(
           infiniteScroll, infiniteScrollItems, currentIndex, orientation,
@@ -131,7 +134,7 @@ const InfiniteScrollContainer = ({
     if (!isVirtualized && viewType === 'list' && showScrollButtons) { // limitation
       debounce(() => {
         if (itemsToScrollAtATime) {
-          const infiniteScrollItems = document.getElementsByClassName('infinite-scroll-item');
+          const infiniteScrollItems = document.getElementsByClassName('IS-item-container');
           const infiniteScroll = infiniteScrollRef && infiniteScrollRef.current;
           const viewportDimensions = getElementDimensions(infiniteScroll, orientation);
           [...infiniteScrollItems].every((item, index, self) => {
@@ -149,8 +152,14 @@ const InfiniteScrollContainer = ({
     }
   };
 
+  const itemsMarginChanged = (margin) => {
+    itemsMargin = margin;
+  };
+
   return (
     <InfiniteScroll
+      classes={classes}
+      styles={styles}
       onPageNoChange={onPageNoChange}
       items={items}
       pageNo={pageNo}
@@ -190,8 +199,13 @@ const InfiniteScrollContainer = ({
       handleNextButtonClick={handleNextButtonClick}
       handleScroll={handleScroll}
       currentIndex={currentIndex}
-      showPartiallyVisibleItem={orientation === 'horizontal' && viewType === 'list' && itemsToScrollAtATime > 0 ? showPartiallyVisibleItem : true} // limitation
+      showPartiallyVisibleItem={
+        orientation === 'horizontal' && viewType === 'list' && itemsToScrollAtATime > 0
+          ? showPartiallyVisibleItem
+          : true
+      } // limitation
       hideScrollbar={hideScrollbar}
+      itemsMarginChanged={itemsMarginChanged}
     >
       {children}
     </InfiniteScroll>
@@ -200,6 +214,68 @@ const InfiniteScrollContainer = ({
 
 InfiniteScrollContainer.propTypes = {
   children: PropTypes.func.isRequired,
+  classes: PropTypes.shape({
+    container: PropTypes.string,
+    main: PropTypes.string,
+    contentContainer: PropTypes.string,
+    content: PropTypes.string,
+    itemsContainer: PropTypes.string,
+    items: PropTypes.string,
+    itemContainer: PropTypes.string,
+    headerContainer: PropTypes.string,
+    footerContainer: PropTypes.string,
+    noDataContainer: PropTypes.string,
+    blockerContainer: PropTypes.string,
+    loaderContainer: PropTypes.string,
+    sensorContainer: PropTypes.string,
+    loadMoreButtonContainer: PropTypes.string,
+    loadMoreButton: PropTypes.string,
+    defaultLoaderContainer: PropTypes.string,
+    defaultLoader: PropTypes.string,
+    scrollButtonContainer: PropTypes.string,
+    scrollButton: PropTypes.string,
+    previousButtonContainer: PropTypes.string,
+    previousButton: PropTypes.string,
+    nextButtonContainer: PropTypes.string,
+    nextButton: PropTypes.string,
+    paginationContainer: PropTypes.string,
+    paginationPreviousButton: PropTypes.string,
+    paginationNextButton: PropTypes.string,
+    paginationActiveButton: PropTypes.string,
+    paginationButton: PropTypes.string,
+    morePagesLabel: PropTypes.string,
+  }),
+  styles: PropTypes.shape({
+    container: PropTypes.instanceOf(Object),
+    main: PropTypes.instanceOf(Object),
+    contentContainer: PropTypes.instanceOf(Object),
+    content: PropTypes.instanceOf(Object),
+    itemsContainer: PropTypes.instanceOf(Object),
+    items: PropTypes.instanceOf(Object),
+    itemContainer: PropTypes.instanceOf(Object),
+    headerContainer: PropTypes.instanceOf(Object),
+    footerContainer: PropTypes.instanceOf(Object),
+    noDataContainer: PropTypes.instanceOf(Object),
+    blockerContainer: PropTypes.instanceOf(Object),
+    loaderContainer: PropTypes.instanceOf(Object),
+    sensorContainer: PropTypes.instanceOf(Object),
+    loadMoreButtonContainer: PropTypes.instanceOf(Object),
+    loadMoreButton: PropTypes.instanceOf(Object),
+    defaultLoaderContainer: PropTypes.instanceOf(Object),
+    defaultLoader: PropTypes.instanceOf(Object),
+    scrollButtonContainer: PropTypes.instanceOf(Object),
+    scrollButton: PropTypes.instanceOf(Object),
+    previousButtonContainer: PropTypes.instanceOf(Object),
+    previousButton: PropTypes.instanceOf(Object),
+    nextButtonContainer: PropTypes.instanceOf(Object),
+    nextButton: PropTypes.instanceOf(Object),
+    paginationContainer: PropTypes.instanceOf(Object),
+    paginationPreviousButton: PropTypes.instanceOf(Object),
+    paginationNextButton: PropTypes.instanceOf(Object),
+    paginationActiveButton: PropTypes.instanceOf(Object),
+    paginationButton: PropTypes.instanceOf(Object),
+    morePagesLabel: PropTypes.instanceOf(Object),
+  }),
   getItems: PropTypes.func,
   getItemsSource: PropTypes.instanceOf(Object),
   flushItems: PropTypes.func,
@@ -236,6 +312,68 @@ InfiniteScrollContainer.propTypes = {
 };
 
 InfiniteScrollContainer.defaultProps = {
+  classes: {
+    container: '',
+    main: '',
+    contentContainer: '',
+    content: '',
+    itemsContainer: '',
+    items: '',
+    itemContainer: '',
+    headerContainer: '',
+    footerContainer: '',
+    noDataContainer: '',
+    blockerContainer: '',
+    loaderContainer: '',
+    sensorContainer: '',
+    loadMoreButtonContainer: '',
+    loadMoreButton: '',
+    defaultLoaderContainer: '',
+    defaultLoader: '',
+    scrollButtonContainer: '',
+    scrollButton: '',
+    previousButtonContainer: '',
+    previousButton: '',
+    nextButtonContainer: '',
+    nextButton: '',
+    paginationContainer: '',
+    paginationPreviousButton: '',
+    paginationNextButton: '',
+    paginationActiveButton: '',
+    paginationButton: '',
+    morePagesLabel: '',
+  },
+  styles: {
+    container: {},
+    main: {},
+    contentContainer: {},
+    content: {},
+    itemsContainer: {},
+    items: {},
+    itemContainer: {},
+    headerContainer: {},
+    footerContainer: {},
+    noDataContainer: {},
+    blockerContainer: {},
+    loaderContainer: {},
+    sensorContainer: {},
+    loadMoreButtonContainer: {},
+    loadMoreButton: {},
+    defaultLoaderContainer: {},
+    defaultLoader: {},
+    scrollButtonContainer: {},
+    scrollButton: {},
+    previousButtonContainer: {},
+    previousButton: {},
+    nextButtonContainer: {},
+    nextButton: {},
+    paginationContainer: {},
+    paginationPreviousButton: {},
+    paginationNextButton: {},
+    paginationActiveButton: {},
+    paginationButton: {},
+    morePagesLabel: {},
+  },
   getItems: noop,
   getItemsSource: {},
   flushItems: noop,

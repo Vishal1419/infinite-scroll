@@ -11,7 +11,7 @@ import Pagination from './components/Pagination/PaginationContainer';
 import { noop, getElementHeight, getElementWidth } from '../../utils';
 
 const InfiniteScroll = ({
-  children, noData,
+  children, classes, styles, noData,
   onPageNoChange, items,
   pageNo, pageSize, total,
   loading, hasError,
@@ -22,7 +22,7 @@ const InfiniteScroll = ({
   showScrollButtons, scrollButtonsPosition,
   previousButtonRef, setPreviousButtonRef, isPreviousButtonEnabled, handlePreviousButtonClick,
   nextButtonRef, setNextButtonRef, isNextButtonEnabled, handleNextButtonClick,
-  handleScroll, currentIndex, showPartiallyVisibleItem, hideScrollbar,
+  handleScroll, currentIndex, showPartiallyVisibleItem, hideScrollbar, itemsMarginChanged,
 }) => {
   const _showScrollButtons = showScrollButtons
   && !(
@@ -54,12 +54,27 @@ const InfiniteScroll = ({
   }
 
   return (
-    <div className={classNames('infinite-scroll-container', orientation, { 'scroll-buttons-visible': showScrollButtons })}>
+    <div
+      className={
+        classNames(
+          'IS-container',
+          classes.container,
+          `IS-INTERNAL-${orientation}`,
+          { 'IS-INTERNAL-scroll-buttons-visible': showScrollButtons },
+        )
+      }
+      style={styles.container}
+    >
       {
         _showScrollButtons && (
           <ScrollButton
             setContainerRef={setPreviousButtonRef}
-            className="previous"
+            containerClassName={
+              classNames('IS-previous-button-container', classes.scrollButtonContainer, classes.previousButtonContainer)
+            }
+            containerStyle={{ ...(styles.scrollButtonContainer), ...(styles.previousButtonContainer) }}
+            className={classNames('IS-previous-button', classes.scrollButton, classes.previousButton)}
+            style={{ ...(styles.scrollButton), ...(styles.previousButton) }}
             disabled={!isPreviousButtonEnabled}
             onClick={handlePreviousButtonClick}
             showOnHover={showScrollButtons === 'hover'}
@@ -72,30 +87,54 @@ const InfiniteScroll = ({
       }
       <div
         ref={infiniteScrollRef}
-        className={classNames('infinite-scroll', { 'scroll-buttons-visible': showScrollButtons })}
-        style={infiniteScrollStyle}
+        className={classNames('IS-main', classes.main, { 'IS-INTERNAL-scroll-buttons-visible': showScrollButtons })}
+        style={{ ...infiniteScrollStyle, ...(styles.main) }}
         onScroll={handleScroll}
       >
         <BlockUI
           tag="div"
-          className="full-height full-min-height"
+          className={classNames('IS-blocker-container', classes.blockerContainer)}
+          style={styles.blockerContainer}
           blocking={
             isPaginated ? loading : (showBlocker && (items && items.length === 0) && loading)
           }
-          loader={blocker || <Loader />}
+          loader={
+            blocker || (
+              <Loader
+                containerClassName={classes.defaultLoaderContainer}
+                containerStyle={styles.defaultLoaderContainer}
+                className={classes.defaultLoader}
+                style={styles.defaultLoader}
+              />
+            )
+          }
           renderChildren={isPaginated && items.length > 0}
         >
           {
             items.length === 0 && !loading
-              ? <div className="no-data">{noData}</div>
+              ? (
+                <div
+                  className={(classNames('IS-no-data-container', classes.noDataContainer))}
+                  style={styles.noDataContainer}
+                >
+                  {noData}
+                </div>
+              )
               : (
-                <div className={classNames('infinite-scroll-content', orientation)} style={{}}>
+                <div
+                  className={classNames('IS-content-container', classes.contentContainer, `IS-INTERNAL-${orientation}`)}
+                  style={styles.contentContainer}
+                >
                   <Items
+                    classes={classes}
+                    styles={styles}
                     items={items}
                     header={header}
                     footer={footer}
                     loadMore={(
                       <LoadMoreItems
+                        classes={classes}
+                        styles={styles}
                         onPageNoChange={onPageNoChange}
                         pageNo={pageNo}
                         pageSize={pageSize}
@@ -112,6 +151,8 @@ const InfiniteScroll = ({
                     )}
                     pagination={isPaginated && (
                       <Pagination
+                        classes={classes}
+                        styles={styles}
                         activePage={pageNo}
                         onChangeActivePage={onPageNoChange}
                         pageSize={pageSize}
@@ -127,6 +168,7 @@ const InfiniteScroll = ({
                     currentIndex={currentIndex}
                     loading={loading}
                     showPartiallyVisibleItem={showPartiallyVisibleItem}
+                    itemsMarginChanged={itemsMarginChanged}
                   >
                     {children}
                   </Items>
@@ -139,7 +181,12 @@ const InfiniteScroll = ({
         _showScrollButtons && (
           <ScrollButton
             setContainerRef={setNextButtonRef}
-            className="next"
+            containerClassName={
+              classNames('IS-next-button-container', classes.scrollButtonContainer, classes.nextButtonContainer)
+            }
+            containerStyle={{ ...(styles.scrollButtonContainer), ...(styles.nextButtonContainer) }}
+            className={classNames('IS-next-button', classes.scrollButton, classes.nextButton)}
+            style={{ ...styles.scrollButton, ...(styles.nextButton) }}
             disabled={!isNextButtonEnabled}
             onClick={handleNextButtonClick}
             showOnHover={showScrollButtons === 'hover'}
@@ -156,6 +203,8 @@ const InfiniteScroll = ({
 
 InfiniteScroll.propTypes = {
   children: PropTypes.func.isRequired,
+  classes: PropTypes.instanceOf(Object),
+  styles: PropTypes.instanceOf(Object),
   onPageNoChange: PropTypes.func,
   items: PropTypes.instanceOf(Array),
   pageNo: PropTypes.number,
@@ -191,9 +240,12 @@ InfiniteScroll.propTypes = {
   currentIndex: PropTypes.number,
   showPartiallyVisibleItem: PropTypes.bool,
   hideScrollbar: PropTypes.bool,
+  itemsMarginChanged: PropTypes.func,
 };
 
 InfiniteScroll.defaultProps = {
+  classes: {},
+  styles: {},
   onPageNoChange: noop,
   items: [],
   pageNo: 1,
@@ -229,6 +281,7 @@ InfiniteScroll.defaultProps = {
   currentIndex: 0,
   showPartiallyVisibleItem: false,
   hideScrollbar: false,
+  itemsMarginChanged: noop,
 };
 
 export default InfiniteScroll;

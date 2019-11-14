@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import { noop, getElementHeight } from '../../../../../utils';
 
 const NormalItems = ({
-  items, children, loadMore, header, footer, pagination, orientation, viewType, floatingLoader,
+  classes, styles, items, children, loadMore, header, footer, pagination, orientation, viewType, floatingLoader,
   visibleItemsIndices, itemStyle, showPartiallyVisibleItem,
 }) => {
   const headerRef = useRef(null);
@@ -18,20 +18,43 @@ const NormalItems = ({
 
   return (
     <>
-      {header && <div ref={headerRef} id="infinite-scroll-header" className="header">{header}</div>}
+      {
+        header && (
+          <div
+            ref={headerRef}
+            className={classNames('IS-header-container', classes.headerContainer)}
+            style={styles.headerContainer}
+          >
+            {header}
+          </div>
+        )
+      }
       <div
-        className={classNames('infinite-scroll-items-wrapper', orientation, viewType)}
+        className={classNames(
+          'IS-items-container', classes.itemsContainer,
+          `IS-INTERNAL-${orientation}`, `IS-INTERNAL-${viewType}`,
+        )}
         style={{
+          ...(styles.itemsContainer),
           height: orientation === 'horizontal'
-            ? `calc(100% - (${((headerRef && headerRef.current && getElementHeight(headerRef.current)) || 0) + ((footerRef && footerRef.current && getElementHeight(footerRef.current)) || 0)}px))`
+            ? `calc(100% - (${
+              ((headerRef && headerRef.current && getElementHeight(headerRef.current)) || 0)
+              + ((footerRef && footerRef.current && getElementHeight(footerRef.current)) || 0)
+            }px))`
             : 'unset',
         }}
       >
-        <div className={classNames('infinite-scroll-items', orientation, viewType)}>
+        <div
+          className={classNames(
+            'IS-items', classes.items,
+            `IS-INTERNAL-${orientation}`, `IS-INTERNAL-${viewType}`,
+          )}
+          style={styles.items}
+        >
           {
             items.map((item, index) => {
               const isItemInViewport = visibleItemsIndices.includes(index);
-              const _itemStyle = showPartiallyVisibleItem
+              const _itemContainerStyle = showPartiallyVisibleItem
                 ? {}
                 : {
                   [orientation === 'horizontal' ? 'marginLeft' : 'marginTop']: (
@@ -46,8 +69,8 @@ const NormalItems = ({
               return (
                 <div
                   key={children(item).props['data-key'] || index}
-                  className="infinite-scroll-item"
-                  style={_itemStyle}
+                  className={classNames('IS-item-container', classes.itemContainer)}
+                  style={{ ...(styles.itemContainer), ..._itemContainerStyle }}
                 >
                   {children(item, index)}
                 </div>
@@ -58,7 +81,17 @@ const NormalItems = ({
         </div>
         {!(floatingLoader && viewType === 'grid') && orientation === 'horizontal' && loadMore}
       </div>
-      {footer && <div ref={footerRef} className="footer">{footer}</div>}
+      {
+        footer && (
+          <div
+            ref={footerRef}
+            className={classNames('IS-footer-container', classes.footerContainer)}
+            style={styles.footerContainer}
+          >
+            {footer}
+          </div>
+        )
+      }
       {!(floatingLoader && viewType === 'grid') && orientation === 'vertical' && loadMore}
       {pagination}
     </>
@@ -66,6 +99,8 @@ const NormalItems = ({
 };
 
 NormalItems.propTypes = {
+  classes: PropTypes.instanceOf(Object),
+  styles: PropTypes.instanceOf(Object),
   items: PropTypes.instanceOf(Array),
   children: PropTypes.func,
   loadMore: PropTypes.node,
@@ -81,6 +116,8 @@ NormalItems.propTypes = {
 };
 
 NormalItems.defaultProps = {
+  classes: {},
+  styles: {},
   items: [],
   children: noop,
   loadMore: <div />,

@@ -8,14 +8,23 @@ import NormalItems from './NormalItems/NormalItemsContainer';
 import { noop } from '../../../../utils';
 
 const Items = ({
-  items, loadMore, children, isVirtualized, header, footer, pagination, orientation, viewType,
-  floatingLoader, infiniteScrollRef, currentIndex, loading, showPartiallyVisibleItem,
+  classes, styles, items, loadMore, children, isVirtualized, header, footer, pagination,
+  orientation, viewType, floatingLoader, infiniteScrollRef, currentIndex, loading,
+  showPartiallyVisibleItem, itemsMarginChanged,
 }) => (
-  <div className={classNames('infinite-scroll-items-container', orientation, viewType)}>
+  <div
+    className={classNames(
+      'IS-content', classes.content,
+      `IS-INTERNAL-${orientation}`, `IS-INTERNAL-${viewType}`,
+    )}
+    style={styles.content}
+  >
     {
       isVirtualized
         ? (
           <VirtualizedItems
+            classes={classes}
+            styles={styles}
             items={items}
             header={header}
             footer={footer}
@@ -29,6 +38,8 @@ const Items = ({
         )
         : (
           <NormalItems
+            classes={classes}
+            styles={styles}
             items={items}
             header={header}
             footer={footer}
@@ -41,6 +52,7 @@ const Items = ({
             currentIndex={currentIndex}
             loading={loading}
             showPartiallyVisibleItem={showPartiallyVisibleItem}
+            itemsMarginChanged={itemsMarginChanged}
           >
             {children}
           </NormalItems>
@@ -50,6 +62,8 @@ const Items = ({
 );
 
 Items.propTypes = {
+  classes: PropTypes.instanceOf(Object),
+  styles: PropTypes.instanceOf(Object),
   items: PropTypes.instanceOf(Array),
   loadMore: PropTypes.node,
   children: PropTypes.func,
@@ -64,9 +78,12 @@ Items.propTypes = {
   currentIndex: PropTypes.number,
   loading: PropTypes.bool,
   showPartiallyVisibleItem: PropTypes.bool,
+  itemsMarginChanged: PropTypes.func,
 };
 
 Items.defaultProps = {
+  classes: {},
+  styles: {},
   items: [],
   loadMore: <div />,
   children: noop,
@@ -81,6 +98,7 @@ Items.defaultProps = {
   currentIndex: 0,
   loading: false,
   showPartiallyVisibleItem: false,
+  itemsMarginChanged: noop,
 };
 
 export default Items;
