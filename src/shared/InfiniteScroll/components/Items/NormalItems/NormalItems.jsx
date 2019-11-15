@@ -27,8 +27,6 @@ const NormalItems = ({
     paginationHeight = (paginationRef && paginationRef.current && getElementHeight(paginationRef.current)) || 0;
   }
 
-  console.log('>>>>>>>', paginationRef);
-
   return (
     <>
       {
