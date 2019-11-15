@@ -34,6 +34,7 @@ const InfiniteScrollExample = ({
           <button type="button" onClick={() => setPageSize(2)}>2</button>
           <button type="button" onClick={() => setPageSize(5)}>5</button>
           <button type="button" onClick={() => setPageSize(10)}>10</button>
+          <button type="button" onClick={() => setPageSize(20)}>20</button>
         </div>
       )}
       footer={`total ${total}`}
@@ -41,8 +42,10 @@ const InfiniteScrollExample = ({
       orientation="horizontal"
       // viewType="grid"
       scrollProps={{
-        showScrollButtons: 'hover',
+        showScrollButtons: true,
         scrollButtonsPosition: 'outside',
+        previousButtonContent: '<',
+        nextButtonContent: '>',
         itemsToScrollAtATime: 4,
         // showPartiallyVisibleItem: true,
         hideScrollbar: false,

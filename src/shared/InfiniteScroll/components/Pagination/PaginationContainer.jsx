@@ -28,7 +28,7 @@ const getPageRange = (activePage, pageNeighbours, totalPages) => {
 };
 
 const PaginationContainer = ({
-  classes, styles, activePage, onChangeActivePage, pageSize, totalRecords, pageNeighbours,
+  classes, styles, containerRef, activePage, onChangeActivePage, pageSize, totalRecords, pageNeighbours,
 }) => {
   const totalPages = Math.ceil(totalRecords / pageSize);
   const pageRange = getPageRange(activePage, pageNeighbours, totalPages);
@@ -68,6 +68,7 @@ const PaginationContainer = ({
 
   return (
     <Pagination
+      containerRef={containerRef}
       containerClassName={classes.paginationContainer}
       containerStyle={styles.paginationContainer}
       totalPages={totalPages}
@@ -79,6 +80,7 @@ const PaginationContainer = ({
 PaginationContainer.propTypes = {
   classes: PropTypes.instanceOf(Object),
   styles: PropTypes.instanceOf(Object),
+  containerRef: PropTypes.instanceOf(Object),
   activePage: PropTypes.number,
   onChangeActivePage: PropTypes.func,
   pageSize: PropTypes.number,
@@ -89,6 +91,7 @@ PaginationContainer.propTypes = {
 PaginationContainer.defaultProps = {
   classes: {},
   styles: {},
+  containerRef: {},
   activePage: 1,
   onChangeActivePage: noop,
   pageSize: 10,

@@ -3,9 +3,13 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 const Pagination = ({
-  containerClassName, containerStyle, totalPages, pages,
+  containerRef, containerClassName, containerStyle, totalPages, pages,
 }) => (
-  <div className={classNames('IS-pagination-container', containerClassName)} style={containerStyle}>
+  <div
+    ref={containerRef}
+    className={classNames('IS-pagination-container', containerClassName)}
+    style={containerStyle}
+  >
     {
       totalPages > 1
       && pages.map(({
@@ -27,6 +31,7 @@ const Pagination = ({
 );
 
 Pagination.propTypes = {
+  containerRef: PropTypes.instanceOf(Object),
   containerClassName: PropTypes.string,
   containerStyle: PropTypes.instanceOf(Object),
   totalPages: PropTypes.number,
@@ -34,6 +39,7 @@ Pagination.propTypes = {
 };
 
 Pagination.defaultProps = {
+  containerRef: {},
   containerClassName: '',
   containerStyle: {},
   totalPages: 0,

@@ -10,11 +10,24 @@ const NormalItems = ({
 }) => {
   const headerRef = useRef(null);
   const footerRef = useRef(null);
+  const paginationRef = useRef(null);
 
   const [, forceUpdate] = useState(null);
   useEffect(() => {
     forceUpdate();
   }, []);
+
+  let headerHeight = 0;
+  let footerHeight = 0;
+  let paginationHeight = 0;
+
+  if (orientation === 'horizontal') {
+    headerHeight = (headerRef && headerRef.current && getElementHeight(headerRef.current)) || 0;
+    footerHeight = (footerRef && footerRef.current && getElementHeight(footerRef.current)) || 0;
+    paginationHeight = (paginationRef && paginationRef.current && getElementHeight(paginationRef.current)) || 0;
+  }
+
+  console.log('>>>>>>>', paginationRef);
 
   return (
     <>
@@ -37,10 +50,7 @@ const NormalItems = ({
         style={{
           ...(styles.itemsContainer),
           height: orientation === 'horizontal'
-            ? `calc(100% - (${
-              ((headerRef && headerRef.current && getElementHeight(headerRef.current)) || 0)
-              + ((footerRef && footerRef.current && getElementHeight(footerRef.current)) || 0)
-            }px))`
+            ? `calc(100% - (${headerHeight + footerHeight + paginationHeight}px))`
             : 'unset',
         }}
       >
@@ -93,7 +103,7 @@ const NormalItems = ({
         )
       }
       {!(floatingLoader && viewType === 'grid') && orientation === 'vertical' && loadMore}
-      {pagination}
+      {pagination && React.cloneElement(pagination, { containerRef: paginationRef })}
     </>
   );
 };

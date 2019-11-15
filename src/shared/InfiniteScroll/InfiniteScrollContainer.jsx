@@ -24,6 +24,7 @@ const InfiniteScrollContainer = ({
   isPaginated, orientation, viewType,
   scrollProps: {
     showScrollButtons, scrollButtonsPosition,
+    previousButtonContent, nextButtonContent,
     itemsToScrollAtATime, showPartiallyVisibleItem, hideScrollbar,
   },
 }) => {
@@ -87,7 +88,7 @@ const InfiniteScrollContainer = ({
   };
 
   useEffect(() => {
-    if (!isVirtualized && viewType === 'list' && showScrollButtons) { // limitation
+    if (!isVirtualized && !isPaginated && viewType === 'list' && showScrollButtons) { // limitation
       let scrollStart;
       if (itemsToScrollAtATime) {
         const infiniteScrollItems = document.getElementsByClassName('IS-item-container');
@@ -131,7 +132,7 @@ const InfiniteScrollContainer = ({
   };
 
   const handleScroll = () => {
-    if (!isVirtualized && viewType === 'list' && showScrollButtons) { // limitation
+    if (!isVirtualized && !isPaginated && viewType === 'list' && showScrollButtons) { // limitation
       debounce(() => {
         if (itemsToScrollAtATime) {
           const infiniteScrollItems = document.getElementsByClassName('IS-item-container');
@@ -181,7 +182,7 @@ const InfiniteScrollContainer = ({
       viewType={viewType}
       floatingLoader={orientation === 'horizontal' && viewType === 'grid' ? true : floatingLoader} // limitation
       infiniteScrollRef={infiniteScrollRef}
-      showScrollButtons={viewType === 'list' && !isVirtualized && showScrollButtons} // limitation
+      showScrollButtons={viewType === 'list' && !isVirtualized && !isPaginated && showScrollButtons} // limitation
       scrollButtonsPosition={
         showScrollButtons === 'hover' // eslint-disable-line
           ? 'inside'
@@ -191,16 +192,18 @@ const InfiniteScrollContainer = ({
       }
       previousButtonRef={previousButtonRef}
       setPreviousButtonRef={setPreviousButtonRef}
+      previousButtonContent={previousButtonContent}
       isPreviousButtonEnabled={isPreviousButtonEnabled}
       handlePreviousButtonClick={handlePreviousButtonClick}
       nextButtonRef={nextButtonRef}
       setNextButtonRef={setNextButtonRef}
+      nextButtonContent={nextButtonContent}
       isNextButtonEnabled={isNextButtonEnabled}
       handleNextButtonClick={handleNextButtonClick}
       handleScroll={handleScroll}
       currentIndex={currentIndex}
       showPartiallyVisibleItem={
-        orientation === 'horizontal' && viewType === 'list' && itemsToScrollAtATime > 0
+        orientation === 'horizontal' && viewType === 'list' && !isPaginated && itemsToScrollAtATime > 0
           ? showPartiallyVisibleItem
           : true
       } // limitation
@@ -305,6 +308,8 @@ InfiniteScrollContainer.propTypes = {
   scrollProps: PropTypes.shape({
     showScrollButtons: PropTypes.oneOf([true, false, 'hover']),
     scrollButtonsPosition: PropTypes.oneOf(['inside', 'outside']),
+    previousButtonContent: PropTypes.oneOfType([PropTypes.node, PropTypes.string]),
+    nextButtonContent: PropTypes.oneOfType([PropTypes.node, PropTypes.string]),
     itemsToScrollAtATime: PropTypes.number,
     showPartiallyVisibleItem: PropTypes.bool,
     hideScrollbar: PropTypes.bool,
@@ -403,6 +408,8 @@ InfiniteScrollContainer.defaultProps = {
   scrollProps: {
     showScrollButtons: false,
     scrollButtonsPosition: 'inside',
+    previousButtonContent: 'Previous',
+    nextButtonContent: 'Next',
     itemsToScrollAtATime: 0,
     showPartiallyVisibleItem: false,
     hideScrollbar: false,

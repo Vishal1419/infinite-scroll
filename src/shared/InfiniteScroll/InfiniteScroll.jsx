@@ -20,8 +20,8 @@ const InfiniteScroll = ({
   isPaginated, orientation, viewType, floatingLoader,
   infiniteScrollRef,
   showScrollButtons, scrollButtonsPosition,
-  previousButtonRef, setPreviousButtonRef, isPreviousButtonEnabled, handlePreviousButtonClick,
-  nextButtonRef, setNextButtonRef, isNextButtonEnabled, handleNextButtonClick,
+  previousButtonRef, setPreviousButtonRef, previousButtonContent, isPreviousButtonEnabled, handlePreviousButtonClick,
+  nextButtonRef, setNextButtonRef, nextButtonContent, isNextButtonEnabled, handleNextButtonClick,
   handleScroll, currentIndex, showPartiallyVisibleItem, hideScrollbar, itemsMarginChanged,
 }) => {
   const _showScrollButtons = showScrollButtons
@@ -81,7 +81,7 @@ const InfiniteScroll = ({
             orientation={orientation}
             position={scrollButtonsPosition}
           >
-            Previous
+            {previousButtonContent}
           </ScrollButton>
         )
       }
@@ -193,7 +193,7 @@ const InfiniteScroll = ({
             orientation={orientation}
             position={scrollButtonsPosition}
           >
-            Next
+            {nextButtonContent}
           </ScrollButton>
         )
       }
@@ -230,10 +230,12 @@ InfiniteScroll.propTypes = {
   scrollButtonsPosition: PropTypes.oneOf(['inside', 'outside']),
   previousButtonRef: PropTypes.instanceOf(Object),
   setPreviousButtonRef: PropTypes.func,
+  previousButtonContent: PropTypes.oneOfType([PropTypes.node, PropTypes.string]),
   isPreviousButtonEnabled: PropTypes.bool,
   handlePreviousButtonClick: PropTypes.func,
   nextButtonRef: PropTypes.instanceOf(Object),
   setNextButtonRef: PropTypes.func,
+  nextButtonContent: PropTypes.oneOfType([PropTypes.node, PropTypes.string]),
   isNextButtonEnabled: PropTypes.bool,
   handleNextButtonClick: PropTypes.func,
   handleScroll: PropTypes.func,
@@ -271,10 +273,12 @@ InfiniteScroll.defaultProps = {
   scrollButtonsPosition: 'inside',
   previousButtonRef: {},
   setPreviousButtonRef: noop,
+  previousButtonContent: 'Previous',
   isPreviousButtonEnabled: false,
   handlePreviousButtonClick: noop,
   nextButtonRef: {},
   setNextButtonRef: noop,
+  nextButtonContent: 'Next',
   isNextButtonEnabled: false,
   handleNextButtonClick: noop,
   handleScroll: noop,
